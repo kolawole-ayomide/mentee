@@ -23,43 +23,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white font-sans antialiased">
-      {/* LEFT SIDE: ILLUSTRATIVE ART PANEL / BRAND IMAGE */}
-      <div className="w-full md:w-[47%] relative min-h-[350px] md:min-h-screen overflow-hidden bg-[#2D2322]">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
+      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      <div className="hidden lg:flex lg:w-[42%] bg-[#2D2322] relative flex-col justify-between overflow-hidden">
+        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
         <img
           src="/logingirl.png"
           alt="Professional working with a tablet device"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover absolute inset-0 z-10"
           onError={(e) => {
-            // Graceful high-quality fallback mapping to image_0c82e0.jpg layout parameters
             e.target.src =
               "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop";
           }}
         />
         {/* Subtle overlay shading to ensure uniform depth match */}
-        <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/5 pointer-events-none z-20" />
       </div>
 
-      {/* RIGHT SIDE: INTERACTIVE LOGIN CONTROL BLOCK */}
-      <div className="w-full md:w-[53%] flex flex-col justify-between relative bg-[#FAFAFA] md:bg-white">
-        {/* Top visual continuity element spacer */}
-        <div className="w-full h-1 bg-gray-100 md:hidden" />
+      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
+        {/* Top decorative spacer row matching global interface flow */}
+        <div className="w-full h-1.5 bg-gray-50 absolute top-0 left-0 right-0" />
 
-        {/* Form Container Wrapper */}
-        <div className="max-w-md w-full mx-auto px-6 sm:px-12 md:px-10 lg:px-16 py-12 md:py-16 my-auto space-y-8 text-center md:text-left">
-          {/* Corporate Identity Brand Header */}
+        {/* Form Inner Content Wrapper */}
+        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
+          {/* Corporate Brand Identity Badge */}
           <div className="flex justify-center">
             <img
               src="/companyLogo.png"
               alt="EKEDC Logo"
-              className="h-12 w-auto object-contain"
+              className="h-11 w-auto object-contain"
               onError={(e) => {
                 e.target.src = "https://placehold.co/155x50?text=EKEDC+Logo";
               }}
             />
           </div>
 
-          {/* Heading Context Description Labels */}
+          {/* Heading Header Context Strings */}
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Login
@@ -72,10 +72,10 @@ export default function LoginPage() {
           </div>
 
           {/* Core Login Information Input Fields */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Address Block Node */}
-            <div className="space-y-1.5 text-left">
-              <label className="text-[11px] font-bold text-gray-700 tracking-wide block">
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bold text-gray-700 block">
                 Work Email Address <span className="text-[#C11224]">*</span>
               </label>
               <input
@@ -83,14 +83,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your official email address"
-                className="w-full text-xs p-3.5 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
+                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
                 required
               />
             </div>
 
             {/* Password Entry Block with integrated toggle element eye button */}
-            <div className="space-y-1.5 text-left">
-              <label className="text-[11px] font-bold text-gray-700 tracking-wide block">
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bold text-gray-700 block">
                 Password <span className="text-[#C11224]">*</span>
               </label>
               <div className="relative">
@@ -99,7 +99,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full text-xs p-3.5 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
+                  className="w-full text-xs p-3 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
                   required
                 />
                 <button
@@ -150,20 +150,20 @@ export default function LoginPage() {
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
+                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
               >
                 Login
               </button>
             </div>
 
             {/* Alternating Sign Up Switch Hyperlink Option */}
-            <div className="text-center pt-2">
-              <span className="text-[11px] text-gray-500 font-normal">
+            <div className="text-center pt-1">
+              <span className="text-[11px] sm:text-xs text-gray-500 font-normal">
                 Don't have an account as a Mentee?{" "}
                 <button
                   type="button"
                   onClick={() => navigate("/signup")}
-                  className="text-[#C11224] font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
+                  className="text-[#C11224] font-bold hover:underline bg-transparent border-none p-0 cursor-pointer"
                 >
                   Sign up
                 </button>
@@ -171,11 +171,11 @@ export default function LoginPage() {
             </div>
 
             {/* Password Retrieval Node Link */}
-            <div className="text-center pt-4">
+            <div className="text-center pt-3">
               <button
                 type="button"
-                onClick={() => navigate("/forgot-password")} // <-- NAVIGATES PERFECTLY TO YOUR FORGOT PASSWORD FILE
-                className="text-xs text-gray-700 font-semibold hover:text-[#C11224] transition-colors bg-transparent border-none p-0 cursor-pointer"
+                onClick={() => navigate("/forgot-password")}
+                className="text-xs text-gray-600 font-bold hover:text-[#C11224] transition-colors bg-transparent border-none p-0 cursor-pointer"
               >
                 Forgot Password?
               </button>

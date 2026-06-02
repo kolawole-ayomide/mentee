@@ -67,14 +67,14 @@ export default function OtpPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white font-sans antialiased">
-      {/* LEFT SIDE: ILLUSTRATIVE COVER HERO ARTWORK PANEL */}
-      <div className="w-full md:w-[45%] bg-[#EAEAEA] relative flex items-end justify-center min-h-[320px] md:min-h-screen p-6 md:p-0 overflow-hidden">
-        {/* Back Button -> steps backward safely to profile data assembly screen (Upload.js) */}
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
+      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
+        {/* Step Back Action Trigger */}
         <button
           type="button"
           onClick={() => navigate("/upload")}
-          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer select-none z-20"
+          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer z-20 bg-white/80 backdrop-blur-xs py-1.5 px-3 rounded-md shadow-xs"
         >
           <svg
             className="w-4 h-4"
@@ -92,50 +92,45 @@ export default function OtpPage() {
           Back
         </button>
 
-        {/* Vector Mockup Container matching image parameters */}
-        <div className="relative w-full h-[85%] md:h-[80%] flex items-end justify-center z-10 p-4">
-          <img
-            src="/email.png"
-            alt="Secure laptop post mailbox asset layout illustrations"
-            className="max-h-full max-w-[85%] md:max-w-[90%] object-contain object-bottom"
-            onError={(e) => {
-              // Perfect fall-back image mapping directly to style standards
-              e.target.src =
-                "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop";
-              e.target.className =
-                "w-[85%] h-[75%] object-cover rounded-xl shadow-xs opacity-90";
-            }}
-          />
-        </div>
+        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
+        <img
+          src="/email.png"
+          alt="Secure laptop post mailbox asset layout illustrations"
+          className="w-full h-full object-cover absolute inset-0 z-10"
+          onError={(e) => {
+            e.target.src =
+              "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop";
+          }}
+        />
       </div>
 
-      {/* RIGHT SIDE: AUTHENTICATION MATRIX GRID DISPLAY COMPONENT */}
-      <div className="w-full md:w-[55%] flex flex-col justify-between relative bg-white">
+      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
         {/* Continuous Flow Top Status Progress Bar Indicator (Filled 75% across onboarding) */}
-        <div className="w-full h-1.5 bg-[#FDE8E9] flex">
-          <div className="w-[75%] h-full bg-[#C11224]"></div>
+        <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex">
+          <div className="w-[75%] h-full bg-[#C11224]" />
         </div>
 
-        {/* Main Interface Action Wrapper */}
-        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 md:px-16 py-12 my-auto space-y-8 text-center md:text-left">
-          {/* Company Brand Logo Header Block */}
-          <div className="flex justify-center md:justify-start">
+        {/* Form Inner Content Wrapper */}
+        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
+          {/* Corporate Brand Identity Badge */}
+          <div className="flex justify-center">
             <img
               src="/companyLogo.png"
               alt="EKEDC Logo"
-              className="h-10 w-auto object-contain"
+              className="h-11 w-auto object-contain"
               onError={(e) => {
                 e.target.src = "https://placehold.co/140x45?text=EKEDC+Logo";
               }}
             />
           </div>
 
-          {/* Heading Description Text Context Blocks */}
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+          {/* Heading Header Context Strings */}
+          <div className="space-y-2 text-center">
+            <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Enter OTP Code
             </h2>
-            <p className="text-xs text-gray-500 max-w-md leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-500 max-w-md mx-auto leading-relaxed">
               Please enter the 4-digit One-Time Password (OTP) sent{" "}
               <span className="font-semibold text-gray-800">to your email</span>
               . This code is displayed in your browser console for testing
@@ -144,9 +139,9 @@ export default function OtpPage() {
           </div>
 
           {/* Central Security Code Matrix Block Form */}
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Split Individual Character Entry Node boxes */}
-            <div className="flex items-center justify-center md:justify-start gap-3 sm:gap-4 py-2">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
               {otp.map((data, index) => (
                 <input
                   key={index}
@@ -157,14 +152,14 @@ export default function OtpPage() {
                   onChange={(e) => handleChange(e.target, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
                   onFocus={(e) => e.target.select()}
-                  className="w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border border-gray-300 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-[#C11224] focus:border-[#C11224] transition-all text-gray-900"
+                  className="w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border border-gray-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 focus:ring-[#C11224] focus:border-[#C11224] transition-all text-gray-900"
                 />
               ))}
             </div>
 
             {/* Alternating Resend Prompt Option Line links */}
-            <div className="text-center md:text-left">
-              <span className="text-xs text-gray-500 font-normal">
+            <div className="text-center">
+              <span className="text-[11px] sm:text-xs text-gray-500 font-normal">
                 Didn't receive the code?{" "}
                 <button
                   type="button"
@@ -180,7 +175,7 @@ export default function OtpPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
+                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
               >
                 Proceed
               </button>

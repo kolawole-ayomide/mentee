@@ -53,14 +53,14 @@ export default function ResetCodePage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white font-sans antialiased">
-      {/* LEFT SIDE: ILLUSTRATIVE COVER PANEL AREA */}
-      <div className="w-full md:w-[45%] bg-[#F9F9F9] relative flex items-center justify-center min-h-[300px] md:min-h-screen p-6 md:p-12 overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
+      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
         {/* Step Back Action Trigger -> routes to previous context view (ForgetPassword.js) */}
         <button
           type="button"
           onClick={() => navigate("/forgot-password")}
-          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer select-none z-20"
+          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer z-20 bg-white/80 backdrop-blur-xs py-1.5 px-3 rounded-md shadow-xs"
         >
           <svg
             className="w-4 h-4"
@@ -78,29 +78,25 @@ export default function ResetCodePage() {
           Back
         </button>
 
-        {/* Vector Mockup Artwork scaling accurately to match image_0bb488.png parameters */}
-        <div className="relative w-full max-w-sm sm:max-w-md h-auto flex items-center justify-center z-10">
-          <img
-            src="/key.png"
-            alt="Illustration of character holding safety security key"
-            className="max-h-[65vh] max-w-[85%] object-contain"
-            onError={(e) => {
-              e.target.src =
-                "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop";
-              e.target.className =
-                "w-[80%] max-h-[40vh] object-cover rounded-xl opacity-70";
-            }}
-          />
-        </div>
+        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
+        <img
+          src="/key.png"
+          alt="Illustration of character holding safety security key"
+          className="w-full h-full object-cover absolute inset-0 z-10"
+          onError={(e) => {
+            e.target.src =
+              "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop";
+          }}
+        />
       </div>
 
-      {/* RIGHT SIDE: AUTH MATRIX ACTIONS PANEL */}
-      <div className="w-full md:w-[55%] flex flex-col justify-between relative bg-white">
-        {/* Continuous border alignment element line */}
+      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
+        {/* Continuous Flow Top Status Progress Bar Indicator */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0" />
 
-        {/* Dynamic Context Block Wrapper */}
-        <div className="max-w-md w-full mx-auto px-6 sm:px-12 md:px-6 py-12 my-auto space-y-8 text-center">
+        {/* Form Inner Content Wrapper */}
+        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
           {/* Corporate Header Identity Identity Brand Logo */}
           <div className="flex justify-center">
             <img
@@ -114,7 +110,7 @@ export default function ResetCodePage() {
           </div>
 
           {/* Heading Text Content Notification Labels */}
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Reset Code Sent!
             </h2>
@@ -125,8 +121,8 @@ export default function ResetCodePage() {
           </div>
 
           {/* Verification Code Box Entries Matrix Block Form */}
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Horizontal Segment Entry Fields Grid block matching image_0bb488.png */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Horizontal Segment Entry Fields Grid block matching global styling criteria */}
             <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
               {code.map((data, index) => (
                 <input
@@ -138,7 +134,7 @@ export default function ResetCodePage() {
                   onChange={(e) => handleChange(e.target, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
                   onFocus={(e) => e.target.select()}
-                  className="w-14 h-14 sm:w-16 sm:h-16 text-center text-lg font-bold border border-gray-200 rounded-lg bg-white shadow-xs focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 transition-all text-gray-900"
+                  className="w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border border-gray-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 focus:ring-[#C11224] focus:border-[#C11224] transition-all text-gray-900"
                 />
               ))}
             </div>
@@ -147,7 +143,7 @@ export default function ResetCodePage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
+                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
               >
                 Verify Code
               </button>

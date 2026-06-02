@@ -29,14 +29,14 @@ export default function VerificationSucessfulPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white font-sans antialiased">
-      {/* LEFT SIDE: GRAPHIC PRESENTATION ILLUSTRATION PANEL */}
-      <div className="w-full md:w-[45%] bg-[#F9F9F9] relative flex items-center justify-center min-h-[300px] md:min-h-screen p-6 md:p-12 overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
+      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
         {/* Back navigation out to code matrix validation point */}
         <button
           type="button"
           onClick={() => navigate("/reset-code")}
-          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer select-none z-20"
+          className="absolute top-6 left-6 flex items-center gap-2 text-xs font-semibold text-[#1A202C] hover:text-[#C11224] transition-colors cursor-pointer z-20 bg-white/80 backdrop-blur-xs py-1.5 px-3 rounded-md shadow-xs"
         >
           <svg
             className="w-4 h-4"
@@ -54,29 +54,25 @@ export default function VerificationSucessfulPage() {
           Back
         </button>
 
-        {/* Vector Asset matching image_0ba54a.png */}
-        <div className="relative w-full max-w-sm sm:max-w-md h-auto flex items-center justify-center z-10">
-          <img
-            src="/key.png"
-            alt="Illustration of character tracking keys"
-            className="max-h-[65vh] max-w-[85%] object-contain"
-            onError={(e) => {
-              e.target.src =
-                "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop";
-              e.target.className =
-                "w-[80%] max-h-[40vh] object-cover rounded-xl opacity-70";
-            }}
-          />
-        </div>
+        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
+        <img
+          src="/key.png"
+          alt="Illustration of character tracking keys"
+          className="w-full h-full object-cover absolute inset-0 z-10"
+          onError={(e) => {
+            e.target.src =
+              "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop";
+          }}
+        />
       </div>
 
-      {/* RIGHT SIDE: PASSWORD UPDATE ENTRY PANEL */}
-      <div className="w-full md:w-[55%] flex flex-col justify-between relative bg-white">
-        {/* Fine styling upper element border */}
+      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
+        {/* Continuous Flow Top Status Progress Bar Indicator */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0" />
 
-        {/* Card Entry Wrapper Layout Frame */}
-        <div className="max-w-md w-full mx-auto px-6 sm:px-12 md:px-6 py-12 my-auto space-y-8 text-center md:text-left">
+        {/* Form Inner Content Wrapper */}
+        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
           {/* Corporate Identity Brand Header */}
           <div className="flex justify-center">
             <img
@@ -101,10 +97,10 @@ export default function VerificationSucessfulPage() {
           </div>
 
           {/* New Password Registration Fields */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* New Password Input Field */}
-            <div className="space-y-1.5 text-left">
-              <label className="text-[11px] font-bold text-gray-700 tracking-wide block">
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bold text-gray-700 block">
                 New Password <span className="text-[#C11224]">*</span>
               </label>
               <div className="relative">
@@ -113,7 +109,7 @@ export default function VerificationSucessfulPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create your new password"
-                  className="w-full text-xs p-3.5 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
+                  className="w-full text-xs p-3 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
                   required
                 />
                 <button
@@ -152,7 +148,7 @@ export default function VerificationSucessfulPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="1.8"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542 7z"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                       />
                     </svg>
                   )}
@@ -161,8 +157,8 @@ export default function VerificationSucessfulPage() {
             </div>
 
             {/* Confirm New Password Input Field */}
-            <div className="space-y-1.5 text-left">
-              <label className="text-[11px] font-bold text-gray-700 tracking-wide block">
+            <div className="space-y-1 text-left">
+              <label className="text-[11px] font-bold text-gray-700 block">
                 Confirm New Password <span className="text-[#C11224]">*</span>
               </label>
               <div className="relative">
@@ -171,7 +167,7 @@ export default function VerificationSucessfulPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your new password"
-                  className="w-full text-xs p-3.5 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
+                  className="w-full text-xs p-3 pr-11 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
                   required
                 />
                 <button
@@ -222,7 +218,7 @@ export default function VerificationSucessfulPage() {
             <div className="pt-3">
               <button
                 type="submit"
-                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
+                className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
               >
                 Reset Password
               </button>
