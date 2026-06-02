@@ -6,35 +6,30 @@ export default function VerificationPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-white font-sans antialiased">
-      {/* LEFT SIDE: GRAPHIC PRESENTATION PANEL */}
-      <div className="w-full md:w-[45%] bg-white relative flex items-center justify-center min-h-[300px] md:min-h-screen p-6 md:p-12 overflow-hidden">
-        {/* Verification Success Vector Artwork Asset Area */}
-        <div className="relative w-full max-w-sm sm:max-w-md md:max-w-full h-auto flex items-center justify-center z-10">
-          <img
-            src="/email.png"
-            alt="Confirmed email message phone illustration"
-            className="max-h-[70vh] max-w-full object-contain"
-            onError={(e) => {
-              // Bulletproof fallback rendering an elegant message confirmation illustration
-              e.target.src =
-                "https://images.unsplash.com/photo-1557200134-90327ee9fafa?q=80&w=600&auto=format&fit=crop";
-              e.target.className =
-                "w-[80%] max-h-[45vh] object-cover rounded-xl shadow-xs opacity-80";
-            }}
-          />
-        </div>
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
+      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
+        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
+        <img
+          src="/email.png"
+          alt="Confirmed email message phone illustration"
+          className="w-full h-full object-cover absolute inset-0 z-10"
+          onError={(e) => {
+            e.target.src =
+              "https://images.unsplash.com/photo-1557200134-90327ee9fafa?q=80&w=600&auto=format&fit=crop";
+          }}
+        />
       </div>
 
-      {/* RIGHT SIDE: SUCCESS ANNOUNCEMENT FRAME */}
-      <div className="w-full md:w-[55%] flex flex-col justify-between relative bg-white">
-        {/* Full flow completion status header line (Progress bar is 100% full!) */}
+      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
+        {/* Continuous Flow Top Status Progress Bar Indicator (Filled 100% full upon completion) */}
         <div className="w-full h-1.5 bg-[#C11224] absolute top-0 left-0 right-0" />
 
-        {/* Messaging Container */}
-        <div className="max-w-md w-full mx-auto px-6 sm:px-12 md:px-6 py-12 my-auto space-y-6 text-center">
-          {/* Corporate EKEDC Logo Header */}
-          <div className="flex justify-center pb-2">
+        {/* Messaging Content Inner Wrapper */}
+        <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6 text-center">
+          {/* Corporate Brand Identity Badge */}
+          <div className="flex justify-center">
             <img
               src="/companyLogo.png"
               alt="EKEDC Logo"
@@ -46,8 +41,8 @@ export default function VerificationPage() {
           </div>
 
           {/* Core Content Messages */}
-          <div className="space-y-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Verification Successful!
             </h2>
             <p className="text-[11px] sm:text-xs text-gray-500 max-w-sm mx-auto leading-relaxed font-normal">
@@ -58,11 +53,11 @@ export default function VerificationPage() {
           </div>
 
           {/* Action Trigger Group */}
-          <div className="pt-4">
+          <div className="pt-4 max-w-xs mx-auto w-full">
             <button
               type="button"
-              onClick={() => navigate("/login")} // Routes straight to your new login page file component!
-              className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
+              onClick={() => navigate("/login")}
+              className="w-full bg-[#C11224] hover:bg-[#A00F1E] text-white py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 active:scale-[0.99] cursor-pointer shadow-sm"
             >
               Back to Login
             </button>
