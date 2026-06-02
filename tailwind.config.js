@@ -2,7 +2,10 @@
 export default {
   content: ["./src/**/*.{html,js}"],
   theme: {
-    extend: {},
+  extend: {
+    fontFamily: {
+      sans: ['HK Grotesk', 'sans-serif'],
+    },
   },
-  plugins: [],
+},
 }
