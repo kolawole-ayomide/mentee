@@ -43,7 +43,14 @@ export default function CreatePage() {
     }
 
     // Move smoothly forward to the next onboarding phase
-    navigate("/upload");
+    // navigate("/upload");
+    localStorage.setItem(
+  "vmpUser",
+  JSON.stringify({
+    name: `${firstName} ${lastName}`,
+  })
+);
+navigate("/upload");
   };
 
   return (

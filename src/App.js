@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-// Auth Flow Pages
+// Auth Pages
 import ChosenPage from "./components/chosen/Chosen";
 import LoginPage from "./components/auth/login/Login";
 import ForgetPasswordPage from "./components/auth/login/ForgetPassword";
@@ -13,7 +13,7 @@ import UploadPage from "./components/auth/signup/Upload";
 import OtpPage from "./components/auth/signup/Otp";
 import VerificationPage from "./components/auth/signup/Verification";
 
-// Dashboard Layout and Ecosystem Pages
+// Dashboard / Layout
 import Layout from "./components/Layout";
 import Dashboard from "./components/pages/dashboard/Dashboard";
 import Notifications from "./components/pages/dashboard/Notifications";
@@ -25,65 +25,44 @@ import Chat from "./components/pages/chat/Chat";
 import Meeting from "./components/pages/meetings/Meeting";
 import Profile from "./components/pages/profile/Profile";
 
+// Context
+import { UserProvider } from "./context/UserContext";
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* STEP 1: Role entry selection page */}
-        <Route path="/" element={<ChosenPage />} />
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public / Auth routes */}
+          <Route path="/" element={<ChosenPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgetPasswordPage />} />
+          <Route path="/reset-code" element={<ResetCodePage />} />
+          <Route path="/password-reset-entry" element={<VerificationSucessfulPage />} />
+          <Route path="/password-reset-success" element={<PasswordRestSuccessfulPage />} />
+          <Route path="/signup" element={<CreatePage />} />
+          <Route path="/upload" element={<UploadPage />} />
+          <Route path="/verify-otp" element={<OtpPage />} />
+          <Route path="/verification-success" element={<VerificationPage />} />
 
-        {/* STEP 1b: Login gateway component */}
-        <Route path="/login" element={<LoginPage />} />
+          {/* Protected Dashboard */}
+          <Route element={<Layout logoSrc="/companyLogo.png" brandName="EXEDC" logoutTo="/login" />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/mentors" element={<Mentors />} />
+            <Route path="/my-mentors" element={<MyMentors />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/assessment" element={<Assessment />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/meeting" element={<Meeting />} />
+            <Route path="/profile" element={<Profile />} />
 
-        {/* PASSWORD RECOVERY CHAIN */}
-        <Route path="/forgot-password" element={<ForgetPasswordPage />} />
-        <Route path="/reset-code" element={<ResetCodePage />} />
-        <Route
-          path="/password-reset-entry"
-          element={<VerificationSucessfulPage />}
-        />
-        <Route
-          path="/password-reset-success"
-          element={<PasswordRestSuccessfulPage />}
-        />
-
-        {/* STEP 2: Registration credentials creation page */}
-        <Route path="/signup" element={<CreatePage />} />
-
-        {/* STEP 3: Profile biography & photo upload page */}
-        <Route path="/upload" element={<UploadPage />} />
-
-        {/* STEP 4: 4-digit security passcode validation page */}
-        <Route path="/verify-otp" element={<OtpPage />} />
-
-        {/* STEP 5: Final successful verification acknowledgment window */}
-        <Route path="/verification-success" element={<VerificationPage />} />
-
-        {/* PROTECTED SYSTEM APP DASHBOARD */}
-        <Route
-          element={
-            <Layout
-              logoSrc="/companyLogo.png"
-              brandName="EXEDC"
-              logoutTo="/login"
-            />
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/mentors" element={<Mentors />} />
-          <Route path="/my-mentors" element={<MyMentors />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/assessment" element={<Assessment />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/meeting" element={<Meeting />} />
-          <Route path="/profile" element={<Profile />} />
-
-          {/* Fallback Catch-All Redirect Router */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 

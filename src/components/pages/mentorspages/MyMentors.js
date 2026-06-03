@@ -1,7 +1,6 @@
 // src/components/pages/mentorspages/MyMentors.js
 import React, { useState } from "react";
 import { FiMessageCircle, FiCalendar } from "react-icons/fi";
-
 const dummyMentors = [
   {
     id: 1,
@@ -68,7 +67,7 @@ export default function MyMentors() {
         {dummyMentors.map((mentor) => (
           <div key={mentor.id} className="flex items-center justify-between border p-4 rounded">
             <div className="flex items-center space-x-4">
-              <img src={mentor.photo} alt={mentor.name} className="w-20 h-20 rounded-full" />
+              <img src={mentor.photo} alt={mentor.name} className="w-20 h-20 rounded-full object-fit" />
               <div>
                 <h2 className="font-semibold">{mentor.name}</h2>
                 <p>{mentor.role}</p>
