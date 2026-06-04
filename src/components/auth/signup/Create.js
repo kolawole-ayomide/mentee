@@ -16,7 +16,6 @@ export default function CreatePage() {
 
   const handlePhoneNumberChange = (e) => {
     const value = e.target.value;
-    // Only allow numbers and restrict length to a maximum of 11 characters
     if (/^\d*$/.test(value) && value.length <= 11) {
       setPhoneNumber(value);
     }
@@ -42,20 +41,25 @@ export default function CreatePage() {
       return;
     }
 
-    // Move smoothly forward to the next onboarding phase
-    // navigate("/upload");
+    // Save ALL fields to localStorage
     localStorage.setItem(
-  "vmpUser",
-  JSON.stringify({
-    name: `${firstName} ${lastName}`,
-  })
-);
-navigate("/upload");
+      "vmpUser",
+      JSON.stringify({
+        name:        `${firstName} ${lastName}`,
+        email:       workEmail,
+        phone:       phoneNumber,
+        staffId:     staffId,
+        department:  department,
+        designation: designation,
+      })
+    );
+
+    navigate("/upload");
   };
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
-      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      {/* LEFT COLUMN PANEL */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
         {/* Step Back Action Trigger */}
         <button
@@ -91,16 +95,16 @@ navigate("/upload");
         />
       </div>
 
-      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
-        {/* Step Progress Bar Track Component */}
+        {/* Step Progress Bar */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex">
           <div className="w-[45%] h-full bg-[#C11224]" />
         </div>
 
         {/* Form Inner Content Wrapper */}
         <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
-          {/* Corporate Brand Identity Badge */}
+          {/* Logo */}
           <div className="flex justify-center">
             <img
               src="/companyLogo.png"
@@ -112,7 +116,7 @@ navigate("/upload");
             />
           </div>
 
-          {/* Heading Header Context Strings */}
+          {/* Heading */}
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Create an Account
@@ -124,9 +128,9 @@ navigate("/upload");
             </p>
           </div>
 
-          {/* Interactive Form Component Layout */}
+          {/* Form */}
           <form onSubmit={handleNextSubmit} className="space-y-4">
-            {/* Dual Inline Columns Grid layout for First Name and Last Name */}
+            {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 text-left">
                 <label className="text-[11px] font-bold text-gray-700 block">
@@ -157,7 +161,7 @@ navigate("/upload");
               </div>
             </div>
 
-            {/* Work Email Input Block */}
+            {/* Work Email */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Work Email Address <span className="text-[#C11224]">*</span>
@@ -172,7 +176,7 @@ navigate("/upload");
               />
             </div>
 
-            {/* Phone Number Input Block — restricted strictly up to 11 digits */}
+            {/* Phone Number */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Phone Number
@@ -187,7 +191,7 @@ navigate("/upload");
               />
             </div>
 
-            {/* Staff ID Input Block */}
+            {/* Staff ID */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Staff ID <span className="text-[#C11224]">*</span>
@@ -202,7 +206,7 @@ navigate("/upload");
               />
             </div>
 
-            {/* Department Select Input Dropdown Container */}
+            {/* Department */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Department <span className="text-[#C11224]">*</span>
@@ -244,7 +248,7 @@ navigate("/upload");
               </div>
             </div>
 
-            {/* Designation Select Input Dropdown Container */}
+            {/* Designation */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Designation <span className="text-[#C11224]">*</span>
@@ -282,7 +286,7 @@ navigate("/upload");
               </div>
             </div>
 
-            {/* Form Pipeline Execution Control Triggers */}
+            {/* Submit Button */}
             <div className="pt-4">
               <button
                 type="submit"
@@ -292,7 +296,7 @@ navigate("/upload");
               </button>
             </div>
 
-            {/* Alternative Login Redirection */}
+            {/* Login Redirect */}
             <div className="text-center pt-2">
               <p className="text-[11px] sm:text-xs text-gray-500 font-normal">
                 Have an account already?{" "}
@@ -308,7 +312,7 @@ navigate("/upload");
           </form>
         </div>
 
-        {/* Global dashboard copyright notations metadata */}
+        {/* Footer */}
         <div className="text-center pb-4 text-[10px] text-gray-400 font-normal">
           © 2026 EXEDC Virtual Mentoring Portal. All rights reserved.
         </div>

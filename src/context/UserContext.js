@@ -28,7 +28,10 @@ import { createContext, useState, useEffect } from "react";
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState({ name: "", email: "", id: "" });
+  const [user, setUser] = useState({
+  name: "", email: "", staffId: "",
+  phone: "", designation: ""
+});
 
   useEffect(() => {
     const saved = localStorage.getItem("vmpUser");

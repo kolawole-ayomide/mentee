@@ -23,15 +23,8 @@ return (
 );
 }
 
-const INITIAL_COURSES = Array.from({ length: 12 }, (_, i) => ({
-id: i + 1,
-mentor: "Daniel Francis",
-title: "Introduction to Marketing",
-objective: "Understand the core principles of marketing",
-status: i < 5 ? "Ongoing" : i < 9 ? "Pending" : "Completed",
-date: "13/10/2023",
-fileUrl: "https://www.w3.org/WAI/WCAG21/quickref/wcag21-quickref-20180621.pdf",
-}));
+// ── CHANGED: empty array — new user has no courses yet ──
+const INITIAL_COURSES = [];
 
 export default function Courses() {
 const [courses, setCourses] = useState(() => {
@@ -48,7 +41,6 @@ const [page,      setPage]      = useState(1);
 
 const tabs = ["Ongoing", "Pending", "Completed"];
 
-/* mark complete + persist */
 const handleComplete = (id) => {
 setCourses((prev) =>
      prev.map((c) => (c.id === id ? { ...c, status: "Completed" } : c))
@@ -60,7 +52,6 @@ if (!ids.includes(id)) {
 setActiveTab("Completed");
 };
 
-/* download course material */
 const handleDownload = (course) => {
 const link = document.createElement("a");
 link.href = course.fileUrl;
@@ -71,7 +62,6 @@ link.click();
 document.body.removeChild(link);
 };
 
-/* move pending → ongoing after download */
 const handleMoveToOngoing = (id) => {
 setCourses((prev) =>
      prev.map((c) => (c.id === id ? { ...c, status: "Ongoing" } : c))
@@ -92,6 +82,7 @@ const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
 
 useEffect(() => setPage(1), [activeTab, search, perPage]);
 
+// ── CHANGED: isEmpty now correctly reflects no courses ──
 const isEmpty = courses.length === 0;
 
 const counts = {
@@ -108,11 +99,22 @@ const stats = [
 { iconSrc: "/pending.png",   iconAlt: "pending",     count: counts.pending,   label: "Total Courses Pending",     countColor: "#B8860B", bg: C.yellowBg },
 ];
 
+// ── empty state ──
 if (isEmpty) {
 return (
+     <div className="space-y-4">
+     <h2 className="text-xl font-bold" style={{ color: C.dark }}>My Courses</h2>
      <div className="flex flex-col items-center justify-center gap-4 py-24">
-     <img src="/mycoursesemptystate.png" alt="No courses" className="w-48 h-auto object-contain" />
-     <p className="text-base font-medium" style={{ color: C.grey }}>You have no course yet</p>
+     <img
+          src="/mycoursesemptystate.png"
+          alt="No courses"
+          className="w-48 h-auto object-contain"
+          onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; }}
+     />
+     <p className="text-base font-medium" style={{ color: C.grey }}>
+          You have no course yet
+     </p>
+     </div>
      </div>
 );
 }
@@ -162,7 +164,8 @@ return (
           <thead>
           <tr className="border-b border-slate-100 text-left">
                {["S/N","MENTOR","COURSE TITLE","LEARNING OBJECTIVE","STATUS","DATE","ACTION"].map((h) => (
-               <th key={h} className="px-6 py-3 text-xs font-bold tracking-wide" style={{ color: C.dark }}>{h}</th>
+               <th key={h} className="px-6 py-3 text-xs font-bold tracking-wide"
+               style={{ color: C.dark }}>{h}</th>
                ))}
           </tr>
           </thead>

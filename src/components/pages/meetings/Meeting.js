@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiSearch,  } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import ActionDropdown from "./ActionDropdown";
 import ViewDescriptionModal from "./ViewDescriptionModal";
 import RescheduleModal from "./RescheduleModal";
@@ -7,24 +7,15 @@ import ShareReviewModal from "./ShareReviewModal";
 
 const C = { red: "#CF173C", dark: "#1B1A23", grey: "#616E7C", navy: "#312F61" };
 
-/* ── mock data ─────────────────────────────────────────────────────────────── */
-const INITIAL_MEETINGS = Array.from({ length: 20 }, (_, i) => ({
-id: i + 1,
-title: "Self Evaluation",
-mentor: "Daniel Francis",
-meetingType: i % 3 === 0 ? "Physical" : "Virtual",
-description:
-"In this mentoring session, we'll focus on your personal and professional growth, setting goals, honing skills, and devising strategies for success",
-status: i < 2 ? "Ongoing" : i < 10 ? "Upcoming" : "Completed",
-date: "13/10/2023, 10:30 am",
-}));
+// ── CHANGED: empty array — no mock data, real user has no meetings yet ──
+const INITIAL_MEETINGS = [];
 
-/* ── status badge ──────────────────────────────────────────────────────────── */
+/* ── status badge ─────────────────────────────────────────────────────────── */
 function StatusBadge({ status }) {
 const map = {
-Ongoing:   { bg: "#FFEDED",  color: C.red          },
-Upcoming:  { bg: "#FFFBE6",  color: "#B8860B"       },
-Completed: { bg: "#EAFDEB",  color: "#069D16"       },
+Ongoing:   { bg: "#FFEDED", color: "#CF173C" },
+Upcoming:  { bg: "#FFFBE6", color: "#B8860B" },
+Completed: { bg: "#EAFDEB", color: "#069D16" },
 };
 const { bg, color } = map[status] || { bg: "#eee", color: "#333" };
 return (
@@ -37,21 +28,19 @@ return (
 );
 }
 
-/* ── main component ────────────────────────────────────────────────────────── */
+/* ── main component ───────────────────────────────────────────────────────── */
 export default function Meeting() {
 const [meetings]            = useState(INITIAL_MEETINGS);
 const [search, setSearch]   = useState("");
 const [perPage, setPerPage] = useState(10);
 const [page, setPage]       = useState(1);
 
-/* modal state */
-const [descModal,     setDescModal]     = useState(null);   // meeting object
-const [reschedModal,  setReschedModal]  = useState(null);   // meeting object
-const [reviewModal,   setReviewModal]   = useState(false);
+const [descModal,    setDescModal]    = useState(null);
+const [reschedModal, setReschedModal] = useState(null);
+const [reviewModal,  setReviewModal]  = useState(false);
 
 const isEmpty = meetings.length === 0;
 
-/* filter */
 const filtered = meetings.filter(
 (m) =>
      search === "" ||
@@ -64,29 +53,33 @@ const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
 
 useEffect(() => setPage(1), [search, perPage]);
 
-/* ── empty state ─────────────────────────────────────────────────────────── */
+/* ── empty state ─────────────────────────────────────────────────────── */
 if (isEmpty) {
 return (
-     <div className="flex flex-col items-center justify-center gap-3 py-28">
-     {/* inline SVG matching the inbox/tray illustration in Figma */}
-     <svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-     <rect x="10" y="28" width="60" height="34" rx="4" stroke="#CF173C" strokeWidth="2" fill="#FFF0F3"/>
-     <path d="M10 46h16l6 8h16l6-8h16" stroke="#CF173C" strokeWidth="2" fill="none" strokeLinejoin="round"/>
-     <path d="M30 10 L40 4 L50 10" stroke="#CF173C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-     <line x1="40" y1="4" x2="40" y2="28" stroke="#CF173C" strokeWidth="2" strokeLinecap="round"/>
-     </svg>
+     <div className="space-y-5">
+     <h2 className="text-xl font-bold" style={{ color: C.dark }}>
+     My Meetings
+     </h2>
+
+     <div className="flex flex-col items-center justify-center py-28">
+     <img
+          src="/meetingsemptystate.png"
+          alt="No scheduled meeting"
+          className="h-30 w-auto object-contain"
+          onError={(e) => { e.target.style.display = "none"; }}
+          />
      <p className="text-sm font-medium" style={{ color: C.grey }}>
-     No scheduled meeting yet
+          No scheduled meeting yet
      </p>
+     </div>
      </div>
 );
 }
 
-/* ── populated state ─────────────────────────────────────────────────────── */
+/* ── populated state ─────────────────────────────────────────────────── */
 return (
 <>
      <div className="space-y-5">
-     {/* title */}
      <h2 className="text-xl font-bold" style={{ color: C.dark }}>
      My Meetings
      </h2>
@@ -100,7 +93,9 @@ return (
           onChange={(e) => setPerPage(Number(e.target.value))}
           className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none"
           >
-          {[5, 10, 20].map((n) => <option key={n} value={n}>{n}</option>)}
+          {[5, 10, 20].map((n) => (
+               <option key={n} value={n}>{n}</option>
+          ))}
           </select>
           <span>entries</span>
      </div>
@@ -136,7 +131,7 @@ return (
           <tbody>
                {paginated.length === 0 ? (
                <tr>
-               <td colSpan={8} className="py-12 text-center" style={{ color: C.grey }}>
+               <td colSpan={8} className="py-12 text-center text-xs" style={{ color: C.grey }}>
                     No results found.
                </td>
                </tr>
@@ -158,7 +153,6 @@ return (
                     <td className="px-4 py-3 whitespace-nowrap" style={{ color: C.grey }}>
                     {meeting.meetingType}
                     </td>
-                    {/* truncated description */}
                     <td className="px-4 py-3 max-w-[160px]" style={{ color: C.grey }}>
                     <span className="line-clamp-2 text-xs">
                          {meeting.description.slice(0, 40)}…
@@ -224,14 +218,14 @@ return (
                className="flex h-8 items-center gap-1 px-3 text-xs hover:bg-slate-50 disabled:opacity-40 transition"
                style={{ color: C.red }}
           >
-               Next 
+               Next
           </button>
           </div>
      </div>
      </div>
      </div>
 
-     {/* ── modals ─────────────────────────────────────────────────────────── */}
+     {/* modals */}
      {descModal && (
      <ViewDescriptionModal
      meeting={descModal}

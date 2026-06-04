@@ -6,8 +6,6 @@ import ChatPanel from "./ChatPanel";
 import DiscussionPanel from "./DiscussionPanel";
 import CreateGroupModal from "./modals/CreateGroupModal";
 
-const HAS_MENTOR = true;
-
 function Avatar({ src, name, online = false }) {
 const [err, setErr] = useState(false);
 const initials = name?.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -27,7 +25,6 @@ return (
 );
 }
 
-/* derive last message preview from messages array */
 function getPreview(messages) {
 if (!messages || messages.length === 0) return "No messages yet";
 const last = messages[messages.length - 1];
@@ -47,14 +44,19 @@ const [joinedGroups,   setJoinedGroups]   = useState([OTHER_GROUPS[0]]);
 const [showCreate,     setShowCreate]     = useState(false);
 const [search,         setSearch]         = useState("");
 
-/* store messages per mentor id so preview updates live */
 const [mentorMessages, setMentorMessages] = useState(
 Object.fromEntries(MENTORS.map((m) => [m.id, m.messages]))
 );
 
+// ── derives from real data ──
+const hasMentor = MENTORS.length > 0;
+
+// ── on mobile, if no mentor and Chat tab is active,
+//    show the empty state full screen instead of the left panel ──
 const mobileRight =
 (activeTab === "Chat" && selectedMentor) ||
-(activeTab === "Discussions" && selectedGroup);
+(activeTab === "Discussions" && selectedGroup) ||
+(activeTab === "Chat" && !hasMentor); // ← KEY CHANGE
 
 const handleCreateGroup = (form) => {
 setMyGroups((prev) => [
@@ -74,33 +76,22 @@ if (!joinedGroups.find((g) => g.id === group.id)) {
 setSelectedGroup(group);
 };
 
-/* called by ChatPanel when a new message is sent */
 const handleMessagesUpdate = (mentorId, updatedMessages) => {
 setMentorMessages((prev) => ({ ...prev, [mentorId]: updatedMessages }));
 };
 
-const filteredMentors     = MENTORS.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()));
-const filteredJoined      = joinedGroups.filter((g) => g.name.toLowerCase().includes(search.toLowerCase()));
-const filteredOther       = OTHER_GROUPS.filter((g) => g.name.toLowerCase().includes(search.toLowerCase()));
-const currentGroups       = groupTab === "My Groups" ? myGroups : filteredOther;
-
-if (!HAS_MENTOR) {
-return (
-     <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-     <img src="/chatemptystate.png" alt="No mentor"
-     onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; }}
-     className="w-24 h-auto object-contain" />
-     <p className="text-sm font-medium" style={{ color: C.grey }}>
-     You have no mentor to start a conversation with
-     </p>
-     <button onClick={() => navigate("/mentors")}
-     className="rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-     style={{ background: C.red }}>
-     Choose a mentor
-     </button>
-     </div>
+const filteredMentors = MENTORS.filter((m) =>
+m.name.toLowerCase().includes(search.toLowerCase())
 );
-}
+const filteredJoined = joinedGroups.filter((g) =>
+g.name.toLowerCase().includes(search.toLowerCase())
+);
+const currentGroups =
+groupTab === "My Groups"
+     ? myGroups
+     : OTHER_GROUPS.filter((g) =>
+     g.name.toLowerCase().includes(search.toLowerCase())
+     );
 
 return (
 <>
@@ -119,9 +110,16 @@ return (
           <div className="flex items-center gap-2 px-4 pt-4 pb-3 border-b border-slate-100 shrink-0">
           {["Chat", "Discussions"].map((tab) => (
                <button key={tab}
-               onClick={() => { setActiveTab(tab); setSelectedMentor(null); setSelectedGroup(null); setSearch(""); }}
+               onClick={() => {
+               setActiveTab(tab);
+               setSelectedMentor(null);
+               setSelectedGroup(null);
+               setSearch("");
+               }}
                className="rounded-lg px-4 py-1.5 text-sm font-semibold transition"
-               style={activeTab === tab ? { background: C.red, color: "#fff" } : { color: C.grey }}>
+               style={activeTab === tab
+               ? { background: C.red, color: "#fff" }
+               : { color: C.grey }}>
                {tab}
                </button>
           ))}
@@ -140,7 +138,6 @@ return (
           {activeTab === "Chat" && (
           <div className="flex-1 overflow-y-auto min-h-0">
                {filteredMentors.map((mentor) => {
-               /* use live messages from state for preview */
                const liveMessages = mentorMessages[mentor.id] || mentor.messages;
                const preview = getPreview(liveMessages);
                return (
@@ -153,9 +150,10 @@ return (
                          <span className="text-xs font-semibold truncate" style={{ color: C.dark }}>
                          {mentor.name}
                          </span>
-                         <span className="text-[10px] shrink-0 ml-2" style={{ color: C.grey }}>{mentor.time}</span>
+                         <span className="text-[10px] shrink-0 ml-2" style={{ color: C.grey }}>
+                         {mentor.time}
+                         </span>
                     </div>
-                    {/* live preview from last message */}
                     <p className="text-xs truncate mt-0.5" style={{ color: C.grey }}>{preview}</p>
                     </div>
                </button>
@@ -178,10 +176,16 @@ return (
                     className="h-10 w-10 rounded-full object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                         <span className="text-xs font-semibold truncate" style={{ color: C.dark }}>{group.name}</span>
-                         <span className="text-[10px] shrink-0 ml-2" style={{ color: C.grey }}>{group.time}</span>
+                         <span className="text-xs font-semibold truncate" style={{ color: C.dark }}>
+                         {group.name}
+                         </span>
+                         <span className="text-[10px] shrink-0 ml-2" style={{ color: C.grey }}>
+                         {group.time}
+                         </span>
                     </div>
-                    <p className="text-xs truncate mt-0.5" style={{ color: C.grey }}>{getPreview(group.messages)}</p>
+                    <p className="text-xs truncate mt-0.5" style={{ color: C.grey }}>
+                         {getPreview(group.messages)}
+                    </p>
                     </div>
                </button>
                ))}
@@ -199,14 +203,19 @@ return (
                </div>
 
                {groupTab === "Other groups" && currentGroups.map((group) => (
-               <div key={group.id} className="flex w-full items-center gap-3 px-4 py-3 border-b border-slate-50">
+               <div key={group.id}
+                    className="flex w-full items-center gap-3 px-4 py-3 border-b border-slate-50">
                     <div className="h-10 w-10 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
                     style={{ background: C.red }}>
                     {group.name.split(" ").map((w) => w[0]).join("").slice(0, 3).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold truncate" style={{ color: C.dark }}>{group.name}</p>
-                    <p className="text-[10px]" style={{ color: C.grey }}>{group.participants} participant</p>
+                    <p className="text-xs font-semibold truncate" style={{ color: C.dark }}>
+                         {group.name}
+                    </p>
+                    <p className="text-[10px]" style={{ color: C.grey }}>
+                         {group.participants} participant
+                    </p>
                     </div>
                     <button onClick={() => handleJoinGroup(group)}
                     className="shrink-0 rounded-lg border px-3 py-1 text-xs font-semibold transition hover:opacity-80"
@@ -222,7 +231,7 @@ return (
                          You have not created any group yet
                     </p>
                     : myGroups.map((group) => (
-                         <button key={group.id} onClick={() => setSelectedGroup(group)}
+                    <button key={group.id} onClick={() => setSelectedGroup(group)}
                          className={`flex w-full items-center gap-3 px-4 py-3 text-left border-b border-slate-50 transition
                          ${selectedGroup?.id === group.id ? "bg-slate-50" : "hover:bg-slate-50"}`}>
                          <div className="h-10 w-10 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
@@ -230,10 +239,14 @@ return (
                          {group.name.charAt(0)}
                          </div>
                          <div className="flex-1 min-w-0">
-                         <p className="text-xs font-semibold truncate" style={{ color: C.dark }}>{group.name}</p>
-                         <p className="text-[10px] truncate" style={{ color: C.grey }}>{getPreview(group.messages)}</p>
+                         <p className="text-xs font-semibold truncate" style={{ color: C.dark }}>
+                         {group.name}
+                         </p>
+                         <p className="text-[10px] truncate" style={{ color: C.grey }}>
+                         {getPreview(group.messages)}
+                         </p>
                          </div>
-                         </button>
+                    </button>
                     ))
                )}
                </div>
@@ -251,13 +264,39 @@ return (
 
      {/* ════ RIGHT PANEL ════ */}
      <div className={`flex-1 min-w-0 min-h-0 ${mobileRight ? "flex flex-col" : "hidden lg:flex lg:flex-col"}`}>
-          {activeTab === "Chat" && !selectedMentor && (
+
+          {/* Chat tab — no mentor yet: show empty state with image */}
+          {activeTab === "Chat" && !selectedMentor && !hasMentor && (
+          <div className="flex flex-1 items-center justify-center flex-col gap-4 text-center px-4 my-16">
+               <img
+               src="/chatemptystate.png"
+               alt="No mentor"
+               onError={(e) => { e.target.onerror = null; e.target.style.display = "none"; }}
+               className="w-15 h-auto object-contain"
+               />
+               <p className="text-sm font-medium" style={{ color: C.grey }}>
+               You have no mentor to start a conversation with
+               </p>
+               <button
+               onClick={() => navigate("/mentors")}
+               className="rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+               style={{ background: C.red }}
+               >
+               Choose a mentor
+               </button>
+          </div>
+          )}
+
+          {/* Chat tab — has mentors but none selected yet */}
+          {activeTab === "Chat" && !selectedMentor && hasMentor && (
           <div className="flex flex-1 items-center justify-center">
                <p className="text-sm text-center px-4" style={{ color: C.grey }}>
                Click on any mentor to start a conversation with
                </p>
           </div>
           )}
+
+          {/* Chat tab — mentor selected */}
           {activeTab === "Chat" && selectedMentor && (
           <ChatPanel
                mentor={{ ...selectedMentor, messages: mentorMessages[selectedMentor.id] || selectedMentor.messages }}
@@ -265,6 +304,8 @@ return (
                onMessagesUpdate={(msgs) => handleMessagesUpdate(selectedMentor.id, msgs)}
           />
           )}
+
+          {/* Discussions tab — no group selected */}
           {activeTab === "Discussions" && !selectedGroup && (
           <div className="flex flex-1 items-center justify-center">
                <p className="text-sm text-center px-4" style={{ color: C.grey }}>
@@ -272,6 +313,8 @@ return (
                </p>
           </div>
           )}
+
+          {/* Discussions tab — group selected */}
           {activeTab === "Discussions" && selectedGroup && (
           <DiscussionPanel group={selectedGroup} onBack={() => setSelectedGroup(null)} />
           )}
