@@ -325,6 +325,7 @@ export default function Dashboard({ user }) {
     }),
     [storedUser, user]
   );
+  
 
   const data = dashboardPresets["empty"];
 
