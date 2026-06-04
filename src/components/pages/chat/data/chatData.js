@@ -6,34 +6,8 @@ grey:  "#616E7C",
 redBg: "#FFEDED",
 };
 
-export const MENTORS = [
-{
-id: 1,
-name: "Daniel Francis",
-role: "Head of Marketing",
-avatar: "/meetingman.png",
-online: true,
-time: "13:55 pm",
-messages: [
-    { id: 1, from: "them", text: "We will be working with that then",                                        time: "Yesterday, 12:03 pm" },
-    { id: 2, from: "me",   text: "Good morning sir, sorry for the late response",                            time: "9:06 am"            },
-    { id: 3, from: "them", text: "Good morning, how are you doing?",                                         time: "10:00 am"           },
-    { id: 4, from: "me",   text: "I am doing fine, Thank you, a reminder that we will have a meeting today", time: "10:25 am"           },
-],
-},
-{
-id: 2,
-name: "Daniel Francis",
-role: "Head of Marketing",
-avatar: "/meetingman2.png",
-// mentee/public/meetingman2.png
-online: false,
-time: "13:55 pm",
-messages: [
-    { id: 1, from: "them", text: "Hello, hope you are doing well?", time: "9:00 am" },
-],
-},
-];
+// ── CHANGED: empty — new user has no mentors yet ──
+export const MENTORS = [];
 
 export const OTHER_GROUPS = [
 {
@@ -47,11 +21,11 @@ time: "10:05 am",
 description:
     "Join us in discussions on goal-setting, self-improvement, career development, and more. Share your experiences, seek advice, and network with like-minded individuals who are on a quest for success.\n\nLet's support each other on the journey to realizing our full potential. Together, we'll reach new heights and celebrate our successes along the way",
 messages: [
-    { id: 1, sender: "Lovely Daniel", text: "We will be working with that then",                                            time: "12:03 pm" },
-    { id: 2, sender: "Kingsley Sam",  text: "We will be working with that then We will be working with that then",           time: "12:04 pm" },
-    { id: 3, sender: "Mariam Sunday", text: "We will be working with that then We will be working with that then",           time: "12:04 pm" },
-    { id: 4, sender: "Lovely Daniel", text: "We will be working with that then",                                            time: "12:03 pm" },
-    { id: 5, sender: "me",            text: "I am doing fine, Thank you, a reminder that we will have a meeting today",     time: "10:05 am" },
+    { id: 1, sender: "Lovely Daniel", text: "We will be working with that then",                                          time: "12:03 pm" },
+    { id: 2, sender: "Kingsley Sam",  text: "We will be working with that then We will be working with that then",         time: "12:04 pm" },
+    { id: 3, sender: "Mariam Sunday", text: "We will be working with that then We will be working with that then",         time: "12:04 pm" },
+    { id: 4, sender: "Lovely Daniel", text: "We will be working with that then",                                          time: "12:03 pm" },
+    { id: 5, sender: "me",            text: "I am doing fine, Thank you, a reminder that we will have a meeting today",   time: "10:05 am" },
 ],
 },
 {

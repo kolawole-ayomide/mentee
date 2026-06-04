@@ -54,7 +54,7 @@ function App() {
             <Route path="/courses" element={<Courses />} />
             <Route path="/assessment" element={<Assessment />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/meeting" element={<Meeting />} />
+            <Route path="/meetings" element={<Meeting />} />
             <Route path="/profile" element={<Profile />} />
 
             {/* Fallback */}
