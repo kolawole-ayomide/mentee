@@ -1,35 +1,23 @@
-import React, { useMemo, useState } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
-  FiBell,
-  FiBookOpen,
-  FiGrid,
-  FiLogOut,
-  FiMenu,
-  FiMessageSquare,
-  FiUser,
-  FiUserCheck,
-  FiUsers,
-  FiVideo,
-  FiX,
+  FiBell, FiBookOpen, FiGrid, FiLogOut, FiMenu,
+  FiMessageSquare, FiUser, FiUserCheck, FiUsers, FiVideo, FiX,
 } from "react-icons/fi";
+import { useUser } from "../context/UserContext";
 
 const navItems = [
-  { name: "Dashboard", path: "/dashboard", icon: FiGrid },
-  { name: "Mentors", path: "/mentors", icon: FiUsers },
-  { name: "My Mentors", path: "/my-mentors", icon: FiUserCheck },
-  { name: "Courses", path: "/courses", icon: FiBookOpen },
-  { name: "Chat", path: "/chat", icon: FiMessageSquare },
-  { name: "Meetings", path: "/meetings", icon: FiVideo },
-  { name: "Profile", path: "/profile", icon: FiUser },
+  { name: "Dashboard",  path: "/dashboard",  icon: FiGrid        },
+  { name: "Mentors",    path: "/mentors",     icon: FiUsers       },
+  { name: "My Mentors", path: "/my-mentors",  icon: FiUserCheck   },
+  { name: "Courses",    path: "/courses",     icon: FiBookOpen    },
+  { name: "Chat",       path: "/chat",        icon: FiMessageSquare },
+  { name: "Meetings",   path: "/meetings",    icon: FiVideo       },
+  { name: "Profile",    path: "/profile",     icon: FiUser        },
 ];
-
-function getPageTitle(pathname) {
-}
 
 function SidebarLink({ item, onClick }) {
   const Icon = item.icon;
-
   return (
     <NavLink
       to={item.path}
@@ -53,15 +41,10 @@ function Brand({ logoSrc, brandName }) {
   if (logoSrc) {
     return (
       <div className="flex items-center">
-        <img
-          src={logoSrc}
-          alt={brandName}
-          className="h-9 w-auto object-contain"
-        />
+        <img src={logoSrc} alt={brandName} className="h-9 w-auto object-contain" />
       </div>
     );
   }
-
   return (
     <div className="flex items-center gap-2">
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-900 text-sm font-bold text-white">
@@ -82,19 +65,20 @@ export default function Layout({
   onLogout,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
+  const [avatarErr,  setAvatarErr]  = useState(false);
   const navigate = useNavigate();
+  const { user, clearUser } = useUser();
 
-  const pageTitle = useMemo(() => getPageTitle(location.pathname), [location.pathname]);
+  // ── derive avatar and initials from context ──
+  const avatar = user?.avatar || null;
+  const initials = user?.name
+    ? user.name.trim().split(" ").filter(Boolean)
+        .slice(0, 2).map((p) => p[0].toUpperCase()).join("")
+    : "U";
 
-  // ── CHANGED: clears localStorage on logout so the next user starts fresh ──
   const handleLogout = () => {
-    localStorage.removeItem("vmpUser");
-
-    if (typeof onLogout === "function") {
-      onLogout();
-      return;
-    }
+    clearUser();
+    if (typeof onLogout === "function") { onLogout(); return; }
     navigate(logoutTo);
   };
 
@@ -138,7 +122,7 @@ export default function Layout({
           ))}
         </nav>
 
-        <div className="p-4 ">
+        <div className="p-4">
           <button
             type="button"
             onClick={handleLogout}
@@ -162,13 +146,10 @@ export default function Layout({
               >
                 <FiMenu className="h-4 w-4" />
               </button>
-
-              <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl">
-                {pageTitle}
-              </h1>
             </div>
 
             <div className="flex items-center space-x-[5rem]">
+              {/* Bell */}
               <button
                 type="button"
                 onClick={() => navigate("/notifications")}
@@ -178,20 +159,30 @@ export default function Layout({
                 <FiBell className="h-4 w-4" />
               </button>
 
+              {/* ── Avatar — shows profile pic or initials ── */}
               <button
                 type="button"
                 onClick={() => navigate("/profile")}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-600 text-white transition hover:opacity-90"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full overflow-hidden bg-rose-600 text-white transition hover:opacity-90"
                 aria-label="Profile"
               >
-                <FiUser className="h-4 w-4" />
+                {avatar && !avatarErr ? (
+                  <img
+                    src={avatar}
+                    alt="Profile"
+                    className="h-full w-full object-cover rounded-full"
+                    onError={() => setAvatarErr(true)}
+                  />
+                ) : (
+                  <span className="text-xs font-bold">{initials}</span>
+                )}
               </button>
             </div>
           </div>
         </header>
 
-        <main className="">
-          <div className="min-h-[calc(100vh-8rem)] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm ">
+        <main>
+          <div className="min-h-[calc(100vh-8rem)] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <Outlet />
           </div>
         </main>

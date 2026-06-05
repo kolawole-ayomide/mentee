@@ -103,10 +103,10 @@ export default function UploadPage() {
       </div>
 
       {/* RIGHT COLUMN PANEL */}
-      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
+      <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0 px-6 sm:px-12 lg:px-16 py-12">
         {/* Progress Bar */}
-        <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex">
-          <div className="w-1/2 h-full bg-[#C11224]" />
+        <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex m-5 rounded-full overflow-hidden">
+          <div className="w-full h-full bg-[#C11224]" />
         </div>
 
         <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">

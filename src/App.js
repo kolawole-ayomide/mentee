@@ -28,25 +28,53 @@ import Profile from "./components/pages/profile/Profile";
 // Context
 import { UserProvider } from "./context/UserContext";
 
+// ── Guards dashboard routes — if no vmpUser in localStorage, redirect to "/" ──
+function ProtectedRoute({ children }) {
+  const user = localStorage.getItem("vmpUser");
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+// ── Guards auth routes — if already logged in, redirect to dashboard ──
+function PublicRoute({ children }) {
+  const user = localStorage.getItem("vmpUser");
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+}
+
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public / Auth routes */}
-          <Route path="/" element={<ChosenPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          {/* ── Public / Auth routes ── */}
+          <Route path="/" element={<PublicRoute><ChosenPage /></PublicRoute>} />
+          <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/forgot-password" element={<ForgetPasswordPage />} />
           <Route path="/reset-code" element={<ResetCodePage />} />
           <Route path="/password-reset-entry" element={<VerificationSucessfulPage />} />
           <Route path="/password-reset-success" element={<PasswordRestSuccessfulPage />} />
-          <Route path="/signup" element={<CreatePage />} />
+          <Route path="/signup" element={<PublicRoute><CreatePage /></PublicRoute>} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/verify-otp" element={<OtpPage />} />
           <Route path="/verification-success" element={<VerificationPage />} />
 
-          {/* Protected Dashboard */}
-          <Route element={<Layout logoSrc="/companyLogo.png" brandName="EXEDC" logoutTo="/login" />}>
+          {/* ── Protected Dashboard routes ── */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <Layout
+                  logoSrc="/companyLogo.png"
+                  brandName="EXEDC"
+                  logoutTo="/"
+                />
+              </ProtectedRoute>
+            }
+          >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/mentors" element={<Mentors />} />
@@ -57,7 +85,7 @@ function App() {
             <Route path="/meetings" element={<Meeting />} />
             <Route path="/profile" element={<Profile />} />
 
-            {/* Fallback */}
+            {/* Fallback inside protected */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>

@@ -1,6 +1,6 @@
 // src/components/pages/mentorspages/MyMentors.js
 import React, { useState } from "react";
-import { FiMessageCircle, FiCalendar } from "react-icons/fi";
+
 const dummyMentors = [
   {
     id: 1,
@@ -25,9 +25,18 @@ const dummyMentors = [
 ];
 
 export default function MyMentors() {
-  const [view, setView] = useState("empty"); // empty | list | details | schedule | change | feedback
+  const [view, setView] = useState("empty");
   const [selectedMentor, setSelectedMentor] = useState(null);
-  const [sessionData, setSessionData] = useState({ type: "Virtual", venue: "", date: "", time: "" });
+
+  // ✅ sessionData now includes title and description
+  const [sessionData, setSessionData] = useState({
+    title: "",
+    description: "",
+    type: "Virtual",
+    venue: "",
+    date: "",
+    time: "",
+  });
 
   const handleSelectMentor = (mentor) => {
     setSelectedMentor(mentor);
@@ -36,17 +45,37 @@ export default function MyMentors() {
 
   const handleBookSession = (mentor) => {
     setSelectedMentor(mentor);
-    setSessionData({ type: "Virtual", venue: "", date: "", time: "" });
+    setSessionData({ title: "", description: "", type: "Virtual", venue: "", date: "", time: "" });
     setView("schedule");
   };
 
-  const handleSubmitSession = () => setView("confirmation");
+  // ✅ saves booked meeting to localStorage so Meeting page can read it
+  const handleSubmitSession = () => {
+    try {
+      const existing = JSON.parse(localStorage.getItem("vmpMeetings") || "[]");
+      const newMeeting = {
+        id: Date.now(),
+        title: sessionData.title || "Mentorship Session",
+        description: sessionData.description || "",
+        mentor: selectedMentor.name,
+        meetingType: sessionData.type,
+        venue: sessionData.venue || "",
+        date: sessionData.date,
+        time: sessionData.time,
+        status: "Upcoming",
+      };
+      localStorage.setItem("vmpMeetings", JSON.stringify([...existing, newMeeting]));
+    } catch {
+      // fail silently
+    }
+    setView("confirmation");
+  };
+
   const handleChangeMentor = () => setView("change");
   const handleSubmitChange = () => setView("changeConfirmation");
   const handleFeedback = () => setView("feedback");
   const handleSubmitFeedback = () => setView("feedbackConfirmation");
 
-  // Screens
   if (view === "empty") {
     return (
       <div className="p-8">
@@ -54,7 +83,9 @@ export default function MyMentors() {
         <div className="flex flex-col items-center justify-center py-20">
           <img src="/mentee.png" alt="empty state" className="w-60 h-auto mb-4 object-fit" />
           <p>You have no mentor yet</p>
-          <button onClick={() => setView("list")} className="mt-4 px-6 py-2 bg-red-600 text-white rounded">Choose a mentor</button>
+          <button onClick={() => setView("list")} className="mt-4 px-6 py-2 bg-red-600 text-white rounded">
+            Choose a mentor
+          </button>
         </div>
       </div>
     );
@@ -83,8 +114,12 @@ export default function MyMentors() {
                   <p>No Meeting Scheduled</p>
                 )}
               </div>
-              <button onClick={() => handleSelectMentor(mentor)} className="px-4 py-2 border rounded text-red-600">View details</button>
-              <button onClick={() => handleBookSession(mentor)} className="px-4 py-2 bg-red-600 text-white rounded">Book a Session</button>
+              <button onClick={() => handleSelectMentor(mentor)} className="px-4 py-2 border rounded text-red-600">
+                View details
+              </button>
+              <button onClick={() => handleBookSession(mentor)} className="px-4 py-2 bg-red-600 text-white rounded">
+                Book a Session
+              </button>
             </div>
           </div>
         ))}
@@ -107,14 +142,12 @@ export default function MyMentors() {
           <h2 className="font-semibold mt-4">Areas of Expertise</h2>
           <span className="px-2 py-1 bg-red-100 text-red-600 rounded mr-2">Brand Strategy</span>
           <span className="px-2 py-1 bg-red-100 text-red-600 rounded">Market Research</span>
-
           <h2 className="font-semibold mt-4">Mentorship Approach</h2>
           <p>Collaborative style ...</p>
-
           <div className="flex space-x-4 mt-4">
-            <button onClick={() => handleFeedback()} className="px-4 py-2 border rounded text-gray-600">Give Feedback</button>
+            <button onClick={handleFeedback} className="px-4 py-2 border rounded text-gray-600">Give Feedback</button>
             <button onClick={() => handleBookSession(selectedMentor)} className="px-4 py-2 bg-red-600 text-white rounded">Schedule a Meeting</button>
-            <button onClick={() => handleChangeMentor()} className="px-4 py-2 border rounded text-red-600">Change Mentor</button>
+            <button onClick={handleChangeMentor} className="px-4 py-2 border rounded text-red-600">Change Mentor</button>
           </div>
         </div>
         <div className="w-1/3 space-y-2">
@@ -139,34 +172,77 @@ export default function MyMentors() {
 
   if (view === "schedule") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/2 space-y-4">
           <h1 className="text-xl font-semibold">Schedule a Session</h1>
           <div className="flex space-x-4">
-            <img src={selectedMentor.photo} className="w-24 h-24 rounded-full" />
+            <img src={selectedMentor.photo} alt={selectedMentor.name} className="w-24 h-24 rounded-full object-cover" />
             <div className="flex-1 space-y-2">
-              <label>Title *</label>
-              <input type="text" className="border p-2 rounded w-full" />
-              <label>Description *</label>
-              <textarea className="border p-2 rounded w-full"></textarea>
-              <label>Meeting Type *</label>
-              <select value={sessionData.type} onChange={(e) => setSessionData({...sessionData, type: e.target.value})} className="border p-2 rounded w-full">
+
+              <label className="text-sm font-semibold">Title *</label>
+              <input
+                type="text"
+                value={sessionData.title}
+                onChange={(e) => setSessionData({ ...sessionData, title: e.target.value })}
+                placeholder="Enter session title"
+                className="border p-2 rounded w-full"
+              />
+
+              <label className="text-sm font-semibold">Description *</label>
+              <textarea
+                value={sessionData.description}
+                onChange={(e) => setSessionData({ ...sessionData, description: e.target.value })}
+                placeholder="Enter session description"
+                className="border p-2 rounded w-full"
+              />
+
+              <label className="text-sm font-semibold">Meeting Type *</label>
+              <select
+                value={sessionData.type}
+                onChange={(e) => setSessionData({ ...sessionData, type: e.target.value })}
+                className="border p-2 rounded w-full"
+              >
                 <option>Virtual</option>
                 <option>Physical</option>
               </select>
+
               {sessionData.type === "Physical" && (
                 <>
-                  <label>Venue *</label>
-                  <input type="text" value={sessionData.venue} onChange={(e)=>setSessionData({...sessionData, venue:e.target.value})} className="border p-2 rounded w-full" />
+                  <label className="text-sm font-semibold">Venue *</label>
+                  <input
+                    type="text"
+                    value={sessionData.venue}
+                    onChange={(e) => setSessionData({ ...sessionData, venue: e.target.value })}
+                    className="border p-2 rounded w-full"
+                  />
                 </>
               )}
-              <label>Availability Session *</label>
-              <input type="date" value={sessionData.date} onChange={(e)=>setSessionData({...sessionData, date:e.target.value})} className="border p-2 rounded w-full" />
-              <label>Availability Time Slot *</label>
-              <input type="time" value={sessionData.time} onChange={(e)=>setSessionData({...sessionData, time:e.target.value})} className="border p-2 rounded w-full" />
+
+              <label className="text-sm font-semibold">Date *</label>
+              <input
+                type="date"
+                value={sessionData.date}
+                onChange={(e) => setSessionData({ ...sessionData, date: e.target.value })}
+                className="border p-2 rounded w-full"
+              />
+
+              <label className="text-sm font-semibold">Time *</label>
+              <input
+                type="time"
+                value={sessionData.time}
+                onChange={(e) => setSessionData({ ...sessionData, time: e.target.value })}
+                className="border p-2 rounded w-full"
+              />
             </div>
           </div>
-          <button onClick={handleSubmitSession} className="px-4 py-2 bg-red-600 text-white rounded">Submit</button>
+          <div className="flex gap-3 pt-2">
+            <button onClick={handleSubmitSession} className="px-4 py-2 bg-red-600 text-white rounded">
+              Submit
+            </button>
+            <button onClick={() => setView("details")} className="px-4 py-2 border rounded text-gray-600">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -174,10 +250,13 @@ export default function MyMentors() {
 
   if (view === "confirmation") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/3 space-y-4 text-center">
-          <p>Your session has been scheduled with {selectedMentor.name}</p>
-          <button onClick={() => setView("details")} className="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+          <p>Your session has been scheduled with {selectedMentor.name}!</p>
+          <p className="text-xs text-gray-500">You can view it on the Meetings page.</p>
+          <button onClick={() => setView("details")} className="px-4 py-2 bg-red-600 text-white rounded">
+            Close
+          </button>
         </div>
       </div>
     );
@@ -185,11 +264,11 @@ export default function MyMentors() {
 
   if (view === "change") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/3 space-y-4">
           <h1 className="text-xl font-semibold">Change Mentor</h1>
           <p>Mentor: {selectedMentor.name}</p>
-          <textarea placeholder="Reason" className="border p-2 rounded w-full"></textarea>
+          <textarea placeholder="Reason" className="border p-2 rounded w-full" />
           <button onClick={handleSubmitChange} className="px-4 py-2 bg-red-600 text-white rounded">Submit</button>
         </div>
       </div>
@@ -198,7 +277,7 @@ export default function MyMentors() {
 
   if (view === "changeConfirmation") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/3 space-y-4 text-center">
           <p>Your request has been received. You will be notified once the change is confirmed.</p>
           <button onClick={() => setView("details")} className="px-4 py-2 bg-red-600 text-white rounded">Close</button>
@@ -209,14 +288,14 @@ export default function MyMentors() {
 
   if (view === "feedback") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/3 space-y-4">
           <h1 className="text-xl font-semibold">Feedback about Mentor</h1>
           <input placeholder="Full Name" className="border p-2 rounded w-full" />
-          <textarea placeholder="Feedback *" className="border p-2 rounded w-full"></textarea>
+          <textarea placeholder="Feedback *" className="border p-2 rounded w-full" />
           <label>Rating *</label>
           <select className="border p-2 rounded w-full">
-            {[1,2,3,4,5].map(n=> <option key={n}>{n}</option>)}
+            {[1, 2, 3, 4, 5].map((n) => <option key={n}>{n}</option>)}
           </select>
           <button onClick={handleSubmitFeedback} className="px-4 py-2 bg-red-600 text-white rounded">Submit</button>
         </div>
@@ -226,7 +305,7 @@ export default function MyMentors() {
 
   if (view === "feedbackConfirmation") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white p-8 rounded w-1/3 space-y-4 text-center">
           <p>Thank you! Your feedback has been received.</p>
           <button onClick={() => setView("details")} className="px-4 py-2 bg-red-600 text-white rounded">Close</button>

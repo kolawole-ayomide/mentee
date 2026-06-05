@@ -98,7 +98,7 @@ export default function CreatePage() {
       {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
         {/* Step Progress Bar */}
-        <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex">
+        <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex m-5 rounded-full overflow-hidden">
           <div className="w-[45%] h-full bg-[#C11224]" />
         </div>
 
