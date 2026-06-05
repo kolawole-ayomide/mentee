@@ -1,41 +1,16 @@
-// import { createContext, useState, useEffect } from "react";
-
-// export const UserContext = createContext();
-
-// export function UserProvider({ children }) {
-//   const [user, setUser] = useState({ name: "", email: "", id: "" });
-
-//   useEffect(() => {
-//     const saved = localStorage.getItem("loggedInUser");
-//     if (saved) setUser(JSON.parse(saved));
-//   }, []);
-
-//   const saveUser = (userData) => {
-//     setUser(userData);
-//     localStorage.setItem("loggedInUser", JSON.stringify(userData));
-//   };
-
-//   return (
-//     <UserContext.Provider value={{ user, saveUser }}>
-//       {children}
-//     </UserContext.Provider>
-//   );
-// }
-
-
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState({
-  name: "", email: "", staffId: "",
-  phone: "", designation: ""
-});
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // ── read on mount ──
     const saved = localStorage.getItem("vmpUser");
-    if (saved) setUser(JSON.parse(saved));
+    if (saved) {
+      try { setUser(JSON.parse(saved)); } catch {}
+    }
   }, []);
 
   const saveUser = (userData) => {
@@ -43,9 +18,19 @@ export function UserProvider({ children }) {
     localStorage.setItem("vmpUser", JSON.stringify(userData));
   };
 
+  const clearUser = () => {
+    setUser(null);
+    localStorage.removeItem("vmpUser");
+  };
+
   return (
-    <UserContext.Provider value={{ user, saveUser }}>
+    <UserContext.Provider value={{ user, saveUser, clearUser }}>
       {children}
     </UserContext.Provider>
   );
+}
+
+// ── handy hook ──
+export function useUser() {
+  return useContext(UserContext);
 }

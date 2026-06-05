@@ -3,6 +3,7 @@ import { FiArrowLeft, FiSmile, FiPaperclip } from "react-icons/fi";
 import { IoMdSend } from "react-icons/io";
 import { C } from "./data/chatData";
 import MessageBubble from "./MessageBubble";
+import { useUser } from "../../../context/UserContext";
 
 function Avatar({ src, name, online = false }) {
 const [err, setErr] = useState(false);
@@ -28,8 +29,13 @@ const [messages, setMessages] = useState(mentor.messages);
 const [input, setInput]       = useState("");
 const [typing, setTyping]     = useState(false);
 const bottomRef = useRef(null);
+const { user } = useUser();
 
-const currentUser = { name: "You", avatar: "/user.png", online: true };
+const currentUser = {
+    name: user?.name || "You",
+    avatar: user?.avatar || "/user.png",     // ← This is the fix
+    online: true
+};
 
 useEffect(() => {
 bottomRef.current?.scrollIntoView({ behavior: "smooth" });

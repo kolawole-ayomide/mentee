@@ -7,10 +7,6 @@ import ShareReviewModal from "./ShareReviewModal";
 
 const C = { red: "#CF173C", dark: "#1B1A23", grey: "#616E7C", navy: "#312F61" };
 
-// ── CHANGED: empty array — no mock data, real user has no meetings yet ──
-const INITIAL_MEETINGS = [];
-
-/* ── status badge ─────────────────────────────────────────────────────────── */
 function StatusBadge({ status }) {
 const map = {
 Ongoing:   { bg: "#FFEDED", color: "#CF173C" },
@@ -28,16 +24,33 @@ return (
 );
 }
 
-/* ── main component ───────────────────────────────────────────────────────── */
 export default function Meeting() {
-const [meetings]            = useState(INITIAL_MEETINGS);
-const [search, setSearch]   = useState("");
-const [perPage, setPerPage] = useState(10);
-const [page, setPage]       = useState(1);
+// ── CHANGED: reads from localStorage on init ──
+const [meetings, setMeetings] = useState(() => {
+try {
+     return JSON.parse(localStorage.getItem("vmpMeetings") || "[]");
+} catch {
+     return [];
+}
+});
+
+const [search,    setSearch]   = useState("");
+const [perPage,   setPerPage]  = useState(10);
+const [page,      setPage]     = useState(1);
 
 const [descModal,    setDescModal]    = useState(null);
 const [reschedModal, setReschedModal] = useState(null);
 const [reviewModal,  setReviewModal]  = useState(false);
+
+// ── re-reads localStorage every time the page is visited ──
+useEffect(() => {
+try {
+     const stored = JSON.parse(localStorage.getItem("vmpMeetings") || "[]");
+     setMeetings(stored);
+} catch {
+     setMeetings([]);
+}
+}, []);
 
 const isEmpty = meetings.length === 0;
 
@@ -53,21 +66,18 @@ const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
 
 useEffect(() => setPage(1), [search, perPage]);
 
-/* ── empty state ─────────────────────────────────────────────────────── */
+// ── empty state ──
 if (isEmpty) {
 return (
      <div className="space-y-5">
-     <h2 className="text-xl font-bold" style={{ color: C.dark }}>
-     My Meetings
-     </h2>
-
-     <div className="flex flex-col items-center justify-center py-28">
+     <h2 className="text-xl font-bold" style={{ color: C.dark }}>My Meetings</h2>
+     <div className="flex flex-col items-center justify-center gap-3 py-28">
      <img
           src="/meetingsemptystate.png"
           alt="No scheduled meeting"
           className="h-30 w-auto object-contain"
           onError={(e) => { e.target.style.display = "none"; }}
-          />
+     />
      <p className="text-sm font-medium" style={{ color: C.grey }}>
           No scheduled meeting yet
      </p>
@@ -76,13 +86,10 @@ return (
 );
 }
 
-/* ── populated state ─────────────────────────────────────────────────── */
 return (
 <>
      <div className="space-y-5">
-     <h2 className="text-xl font-bold" style={{ color: C.dark }}>
-     My Meetings
-     </h2>
+     <h2 className="text-xl font-bold" style={{ color: C.dark }}>My Meetings</h2>
 
      {/* toolbar */}
      <div className="flex flex-wrap items-center justify-between gap-3">
@@ -93,9 +100,7 @@ return (
           onChange={(e) => setPerPage(Number(e.target.value))}
           className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none"
           >
-          {[5, 10, 20].map((n) => (
-               <option key={n} value={n}>{n}</option>
-          ))}
+          {[5, 10, 20].map((n) => <option key={n} value={n}>{n}</option>)}
           </select>
           <span>entries</span>
      </div>
@@ -118,11 +123,8 @@ return (
           <thead>
                <tr className="border-b border-slate-100 text-left">
                {["S/N","Title","Mentor","Meeting Type","Description","Status","Date","Action"].map((h) => (
-               <th
-                    key={h}
-                    className="px-4 py-3 text-xs font-bold tracking-wide whitespace-nowrap"
-                    style={{ color: C.dark }}
-               >
+               <th key={h} className="px-4 py-3 text-xs font-bold tracking-wide whitespace-nowrap"
+                    style={{ color: C.dark }}>
                     {h}
                </th>
                ))}
@@ -137,10 +139,7 @@ return (
                </tr>
                ) : (
                paginated.map((meeting, idx) => (
-               <tr
-                    key={meeting.id}
-                    className="border-b border-slate-50 hover:bg-slate-50/60 transition"
-               >
+               <tr key={meeting.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition">
                     <td className="px-4 py-3 text-xs" style={{ color: C.grey }}>
                     {(page - 1) * perPage + idx + 1}
                     </td>
@@ -155,7 +154,8 @@ return (
                     </td>
                     <td className="px-4 py-3 max-w-[160px]" style={{ color: C.grey }}>
                     <span className="line-clamp-2 text-xs">
-                         {meeting.description.slice(0, 40)}…
+                         {meeting.description?.slice(0, 40)}
+                         {meeting.description?.length > 40 ? "…" : ""}
                     </span>
                     </td>
                     <td className="px-4 py-3">
@@ -202,11 +202,9 @@ return (
                key={p}
                onClick={() => setPage(p)}
                className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition"
-               style={
-               p === page
-                    ? { background: C.red, color: "#fff" }
-                    : { border: "1px solid #CF173C", color: C.grey }
-               }
+               style={p === page
+               ? { background: C.red, color: "#fff" }
+               : { border: "1px solid #CF173C", color: C.grey }}
                >
                {p}
                </button>
@@ -225,14 +223,9 @@ return (
      </div>
      </div>
 
-     {/* modals */}
      {descModal && (
-     <ViewDescriptionModal
-     meeting={descModal}
-     onClose={() => setDescModal(null)}
-     />
+     <ViewDescriptionModal meeting={descModal} onClose={() => setDescModal(null)} />
      )}
-
      {reschedModal && (
      <RescheduleModal
      meeting={reschedModal}
@@ -240,7 +233,6 @@ return (
      onSubmit={(data) => console.log("Rescheduled:", data)}
      />
      )}
-
      {reviewModal && (
      <ShareReviewModal
      onClose={() => setReviewModal(false)}
