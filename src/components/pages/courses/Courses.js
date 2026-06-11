@@ -3,6 +3,10 @@ import { FiSearch } from "react-icons/fi";
 import Ongoing   from "./Ongoing";
 import Pending   from "./Pending";
 import Completed from "./Completed";
+// ── Toggle this to switch between empty state and course content ──
+// true  = shows empty state (no courses)
+// false = shows full course list with data
+import { SHOW_COURSES_EMPTY_STATE, COURSE_DATA } from "./data/coursesData";
 
 const C = {
 navy: "#312F61", red: "#CF173C", redBg: "#FFEDED", purple: "#DEDCF9",
@@ -23,13 +27,13 @@ return (
 );
 }
 
-// ── CHANGED: empty array — new user has no courses yet ──
-const INITIAL_COURSES = [];
+
 
 export default function Courses() {
 const [courses, setCourses] = useState(() => {
+if (SHOW_COURSES_EMPTY_STATE) return [];
 const completedIds = JSON.parse(localStorage.getItem("completedCourses") || "[]");
-return INITIAL_COURSES.map((c) =>
+return COURSE_DATA.map((c) =>
      completedIds.includes(c.id) ? { ...c, status: "Completed" } : c
 );
 });
@@ -82,7 +86,6 @@ const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
 
 useEffect(() => setPage(1), [activeTab, search, perPage]);
 
-// ── CHANGED: isEmpty now correctly reflects no courses ──
 const isEmpty = courses.length === 0;
 
 const counts = {
@@ -99,7 +102,6 @@ const stats = [
 { iconSrc: "/pending.png",   iconAlt: "pending",     count: counts.pending,   label: "Total Courses Pending",     countColor: "#B8860B", bg: C.yellowBg },
 ];
 
-// ── empty state ──
 if (isEmpty) {
 return (
      <div className="space-y-4">

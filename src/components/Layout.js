@@ -5,6 +5,7 @@ import {
   FiMessageSquare, FiUser, FiUserCheck, FiUsers, FiVideo, FiX,
 } from "react-icons/fi";
 import { useUser } from "../context/UserContext";
+import { clearAllFiles } from "./pages/chat/utils/fileStorage";
 
 const navItems = [
   { name: "Dashboard",  path: "/dashboard",  icon: FiGrid        },
@@ -76,11 +77,12 @@ export default function Layout({
         .slice(0, 2).map((p) => p[0].toUpperCase()).join("")
     : "U";
 
-  const handleLogout = () => {
-    clearUser();
-    if (typeof onLogout === "function") { onLogout(); return; }
-    navigate(logoutTo);
-  };
+const handleLogout = async () => {
+  await clearAllFiles().catch(() => {});  // ← clear IndexedDB files
+  clearUser();
+  if (typeof onLogout === "function") { onLogout(); return; }
+  navigate(logoutTo);
+};
 
   return (
     <div className="min-h-screen bg-slate-50">
