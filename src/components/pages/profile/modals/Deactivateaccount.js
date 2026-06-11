@@ -4,16 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { C } from "../data/profileData";
 import { IoAlert } from "react-icons/io5";
 import { useUser } from "../../../../context/UserContext";
+import { clearAllFiles } from "../../../pages/chat/utils/fileStorage";
 
 export default function DeactivateAccount({ onClose }) {
 const navigate = useNavigate();
 const { clearUser } = useUser();
 
-const handleDeactivate = () => {
-clearUser(); // ── clears context + localStorage ──
-sessionStorage.clear();
-onClose();
-navigate("/");
+const handleDeactivate = async () => {
+  await clearAllFiles().catch(() => {});  // ← clear IndexedDB files
+    clearUser();
+    sessionStorage.clear();
+    onClose();
+    navigate("/");
 };
 
 return (

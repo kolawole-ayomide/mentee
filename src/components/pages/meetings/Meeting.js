@@ -4,6 +4,7 @@ import ActionDropdown from "./ActionDropdown";
 import ViewDescriptionModal from "./ViewDescriptionModal";
 import RescheduleModal from "./RescheduleModal";
 import ShareReviewModal from "./ShareReviewModal";
+import CallRoom from "./CallRoom";
 
 const C = { red: "#CF173C", dark: "#1B1A23", grey: "#616E7C", navy: "#312F61" };
 
@@ -15,42 +16,57 @@ Completed: { bg: "#EAFDEB", color: "#069D16" },
 };
 const { bg, color } = map[status] || { bg: "#eee", color: "#333" };
 return (
-<span
-     className="inline-block rounded-full px-3 py-0.5 text-xs font-semibold whitespace-nowrap"
-     style={{ background: bg, color }}
->
+<span className="inline-block rounded-full px-3 py-0.5 text-xs font-semibold whitespace-nowrap"
+     style={{ background: bg, color }}>
      {status}
 </span>
 );
 }
 
 export default function Meeting() {
-// ── CHANGED: reads from localStorage on init ──
 const [meetings, setMeetings] = useState(() => {
 try {
      return JSON.parse(localStorage.getItem("vmpMeetings") || "[]");
-} catch {
-     return [];
-}
+} catch { return []; }
 });
 
-const [search,    setSearch]   = useState("");
-const [perPage,   setPerPage]  = useState(10);
-const [page,      setPage]     = useState(1);
-
+const [search,       setSearch]       = useState("");
+const [perPage,      setPerPage]      = useState(10);
+const [page,         setPage]         = useState(1);
 const [descModal,    setDescModal]    = useState(null);
 const [reschedModal, setReschedModal] = useState(null);
 const [reviewModal,  setReviewModal]  = useState(false);
+const [callMeeting,  setCallMeeting]  = useState(null); // ← call room
 
-// ── re-reads localStorage every time the page is visited ──
 useEffect(() => {
 try {
      const stored = JSON.parse(localStorage.getItem("vmpMeetings") || "[]");
      setMeetings(stored);
-} catch {
-     setMeetings([]);
-}
+} catch { setMeetings([]); }
 }, []);
+
+// ── save to localStorage whenever meetings change ──
+const saveMeetings = (updated) => {
+setMeetings(updated);
+localStorage.setItem("vmpMeetings", JSON.stringify(updated));
+};
+
+// ── reschedule: update the meeting's date, time, title, description ──
+const handleReschedule = (updatedMeeting) => {
+const updated = meetings.map((m) =>
+     m.id === reschedModal.id ? { ...m, ...updatedMeeting } : m
+);
+saveMeetings(updated);
+setReschedModal(null);
+};
+
+// ── mark as completed ──
+const handleMarkCompleted = (meetingId) => {
+const updated = meetings.map((m) =>
+     m.id === meetingId ? { ...m, status: "Completed" } : m
+);
+saveMeetings(updated);
+};
 
 const isEmpty = meetings.length === 0;
 
@@ -66,18 +82,14 @@ const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
 
 useEffect(() => setPage(1), [search, perPage]);
 
-// ── empty state ──
 if (isEmpty) {
 return (
      <div className="space-y-5">
      <h2 className="text-xl font-bold" style={{ color: C.dark }}>My Meetings</h2>
      <div className="flex flex-col items-center justify-center gap-3 py-28">
-     <img
-          src="/meetingsemptystate.png"
-          alt="No scheduled meeting"
-          className="h-30 w-auto object-contain"
-          onError={(e) => { e.target.style.display = "none"; }}
-     />
+     <img src="/meetingsemptystate.png" alt="No scheduled meeting"
+          className="h-32 w-auto object-contain"
+          onError={(e) => { e.target.style.display = "none"; }} />
      <p className="text-sm font-medium" style={{ color: C.grey }}>
           No scheduled meeting yet
      </p>
@@ -88,45 +100,44 @@ return (
 
 return (
 <>
+     {/* ── Call Room overlay ── */}
+     {callMeeting && (
+     <CallRoom
+     meeting={callMeeting}
+     onClose={() => setCallMeeting(null)}
+     />
+     )}
+
      <div className="space-y-5">
      <h2 className="text-xl font-bold" style={{ color: C.dark }}>My Meetings</h2>
 
-     {/* toolbar */}
+     {/* Toolbar */}
      <div className="flex flex-wrap items-center justify-between gap-3">
      <div className="flex items-center gap-2 text-sm" style={{ color: C.grey }}>
           <span>Show</span>
-          <select
-          value={perPage}
-          onChange={(e) => setPerPage(Number(e.target.value))}
-          className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none"
-          >
+          <select value={perPage} onChange={(e) => setPerPage(Number(e.target.value))}
+          className="rounded-lg border border-slate-200 px-2 py-1 text-sm focus:outline-none">
           {[5, 10, 20].map((n) => <option key={n} value={n}>{n}</option>)}
           </select>
           <span>entries</span>
      </div>
-
      <div className="relative">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
-          <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          <input value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Search"
-          className="rounded-lg border border-slate-200 py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#312F61]/20 w-44"
-          />
+          className="rounded-lg border border-slate-200 py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#312F61]/20 w-44" />
      </div>
      </div>
 
-     {/* table */}
+     {/* Table */}
      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
      <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-h-full text-sm">
           <thead>
                <tr className="border-b border-slate-100 text-left">
                {["S/N","Title","Mentor","Meeting Type","Description","Status","Date","Action"].map((h) => (
                <th key={h} className="px-4 py-3 text-xs font-bold tracking-wide whitespace-nowrap"
-                    style={{ color: C.dark }}>
-                    {h}
-               </th>
+                    style={{ color: C.dark }}>{h}</th>
                ))}
                </tr>
           </thead>
@@ -139,7 +150,8 @@ return (
                </tr>
                ) : (
                paginated.map((meeting, idx) => (
-               <tr key={meeting.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition">
+               <tr key={meeting.id}
+                    className="border-b border-slate-50 hover:bg-slate-50/60 transition">
                     <td className="px-4 py-3 text-xs" style={{ color: C.grey }}>
                     {(page - 1) * perPage + idx + 1}
                     </td>
@@ -168,9 +180,10 @@ return (
                     <ActionDropdown
                          status={meeting.status}
                          onViewDescription={() => setDescModal(meeting)}
-                         onJoinSession={() => window.open("#", "_blank")}
+                         onJoinSession={() => setCallMeeting(meeting)}
                          onReschedule={() => setReschedModal(meeting)}
                          onShareReview={() => setReviewModal(true)}
+                         onMarkCompleted={() => handleMarkCompleted(meeting.id)}
                     />
                     </td>
                </tr>
@@ -180,44 +193,29 @@ return (
           </table>
      </div>
 
-     {/* pagination */}
+     {/* Pagination */}
      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-100">
           <span className="text-xs" style={{ color: C.grey }}>
           Showing {filtered.length === 0 ? 0 : (page - 1) * perPage + 1} to{" "}
           {Math.min(page * perPage, filtered.length)} of {filtered.length} entries
           </span>
-
           <div className="flex items-center gap-1">
-          <button
-               onClick={() => setPage((p) => Math.max(1, p - 1))}
-               disabled={page === 1}
+          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
                className="flex h-8 items-center gap-1 px-3 text-xs hover:bg-slate-50 disabled:opacity-40 transition"
-               style={{ color: C.grey }}
-          >
-               Previous
-          </button>
-
+               style={{ color: C.grey }}>Previous</button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-               <button
-               key={p}
-               onClick={() => setPage(p)}
+               <button key={p} onClick={() => setPage(p)}
                className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-medium transition"
                style={p === page
                ? { background: C.red, color: "#fff" }
-               : { border: "1px solid #CF173C", color: C.grey }}
-               >
+               : { border: "1px solid #CF173C", color: C.grey }}>
                {p}
                </button>
           ))}
-
-          <button
-               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                disabled={page === totalPages}
                className="flex h-8 items-center gap-1 px-3 text-xs hover:bg-slate-50 disabled:opacity-40 transition"
-               style={{ color: C.red }}
-          >
-               Next
-          </button>
+               style={{ color: C.red }}>Next</button>
           </div>
      </div>
      </div>
@@ -230,7 +228,7 @@ return (
      <RescheduleModal
      meeting={reschedModal}
      onClose={() => setReschedModal(null)}
-     onSubmit={(data) => console.log("Rescheduled:", data)}
+     onSubmit={handleReschedule}
      />
      )}
      {reviewModal && (
