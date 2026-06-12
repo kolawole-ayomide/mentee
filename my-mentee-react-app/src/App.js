@@ -70,7 +70,7 @@ function App() {
                 <Layout
                   logoSrc="/companyLogo.png"
                   brandName="EXEDC"
-                  logoutTo="/"
+                  logoutTo="/login"
                 />
               </ProtectedRoute>
             }

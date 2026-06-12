@@ -61,7 +61,7 @@ function Brand({ logoSrc, brandName }) {
 export default function Layout({
   logoSrc = "/companyLogo.png",
   brandName = "EXEDC",
-  logoutTo = "/",
+  logoutTo = "/login",
   onLogout,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
