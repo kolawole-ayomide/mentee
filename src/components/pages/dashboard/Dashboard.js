@@ -9,6 +9,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { useUser } from "../../../context/UserContext";
+import { SHOW_COURSES_EMPTY_STATE, COURSE_DATA } from "../courses/data/coursesData";
 
 const dashboardPresets = {
   empty: {
@@ -139,8 +140,21 @@ function getInitials(name) {
 
 function readCourseStats() {
   try {
+    if (SHOW_COURSES_EMPTY_STATE) {
+      return { total: 0, ongoing: 0, completed: 0 };
+    }
+
     const completedIds = JSON.parse(localStorage.getItem("completedCourses") || "[]");
-    return { total: 0, ongoing: 0, completed: completedIds.length };
+
+    const courses = COURSE_DATA.map((c) =>
+      completedIds.includes(c.id) ? { ...c, status: "Completed" } : c
+    );
+
+    return {
+      total:     courses.length,
+      ongoing:   courses.filter((c) => c.status === "Ongoing").length,
+      completed: courses.filter((c) => c.status === "Completed").length,
+    };
   } catch {
     return { total: 0, ongoing: 0, completed: 0 };
   }

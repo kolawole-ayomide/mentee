@@ -20,9 +20,6 @@ const [chatInput,    setChatInput]    = useState("");
 const [chatMessages, setChatMessages] = useState([]);
 const [ending,       setEnding]       = useState(false);
 
-// ✅ removed isFullscreen (was assigned but never used in JSX)
-// ✅ removed containerRef (was declared but never attached to any element)
-
 const videoRef  = useRef(null);
 const streamRef = useRef(null);
 const timerRef  = useRef(null);
