@@ -7,16 +7,17 @@ export default function ResetCodePage() {
 
   // 4-Digit entry management state arrays
   const [code, setCode] = useState(["", "", "", ""]);
+  const [errorMessage, setErrorMessage] = useState("");
   const inputRefs = useRef([]);
 
-  // Outputs a simulated testing verification code directly to developer terminal logs
+  // Verify that a valid reset session context exists when the page loads
   useEffect(() => {
-    const testResetCode = Math.floor(1000 + Math.random() * 9000).toString();
-    console.log("-----------------------------------------");
-    console.log(
-      `[EKEDC SECURITY] Your Password Reset Code is: ${testResetCode}`,
-    );
-    console.log("-----------------------------------------");
+    const contextString = localStorage.getItem("vmpResetContext");
+    if (!contextString) {
+      setErrorMessage(
+        "Reset session expired or invalid. Please request a new code.",
+      );
+    }
   }, []);
 
   const handleChange = (element, index) => {
@@ -41,15 +42,48 @@ export default function ResetCodePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage("");
     const enteredCode = code.join("");
 
     if (enteredCode.length < 4) {
-      alert("Please complete the 4-digit reset verification code inputs.");
+      setErrorMessage(
+        "Please complete the 4-digit reset verification code inputs.",
+      );
       return;
     }
 
-    // Direct entry path forward into your responsive password input view
-    navigate("/password-reset-entry");
+    try {
+      // 1. Grab the context saved by ForgetPassword.js
+      const contextString = localStorage.getItem("vmpResetContext");
+
+      if (!contextString) {
+        setErrorMessage("Reset session expired. Please request a new code.");
+        return;
+      }
+
+      const context = JSON.parse(contextString);
+
+      // 2. STRICT VALIDATION: Compare the segmented matrix string directly with the console code
+      if (enteredCode !== context.validCode) {
+        setErrorMessage(
+          "Invalid reset code. Please check your console log and try again.",
+        );
+        return;
+      }
+
+      // Optional Safety Guardrail: Expire verification code tokens after 15 minutes
+      if (Date.now() - context.timestamp > 15 * 60 * 1000) {
+        setErrorMessage("This code has expired. Please request a new one.");
+        return;
+      }
+
+      // 3. Direct entry path forward into your responsive password input view
+      navigate("/password-reset-entry");
+    } catch (error) {
+      setErrorMessage(
+        "An error occurred during verification. Please try again.",
+      );
+    }
   };
 
   return (
@@ -115,28 +149,53 @@ export default function ResetCodePage() {
               Reset Code Sent!
             </h2>
             <p className="text-[11px] sm:text-xs text-gray-500 max-w-xs mx-auto leading-relaxed font-normal">
-              We've sent a unique reset code to your email address. Please check
-              your inbox (and spam folder) for an email from us.
+              Please enter the unique 4-digit password reset code printed
+              directly into your developer terminal console logs.
             </p>
           </div>
 
           {/* Verification Code Box Entries Matrix Block Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Horizontal Segment Entry Fields Grid block matching global styling criteria */}
-            <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
-              {code.map((data, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  maxLength="1"
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={data}
-                  onChange={(e) => handleChange(e.target, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  onFocus={(e) => e.target.select()}
-                  className="w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border border-gray-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 focus:ring-[#C11224] focus:border-[#C11224] transition-all text-gray-900"
-                />
-              ))}
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
+                {code.map((data, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    value={data}
+                    onChange={(e) => handleChange(e.target, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    onFocus={(e) => e.target.select()}
+                    className={`w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 transition-all text-gray-900 ${
+                      errorMessage
+                        ? "border-[#C11224] focus:ring-[#C11224] focus:border-[#C11224]"
+                        : "border-gray-200 focus:ring-[#C11224] focus:border-[#C11224]"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {errorMessage && (
+                <div className="flex items-center gap-1.5 pt-1 text-[#C11224]">
+                  <svg
+                    className="w-3.5 h-3.5 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-[10px] font-semibold tracking-wide text-center">
+                    {errorMessage}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Commit Form Verification CTA Operation Buttons */}

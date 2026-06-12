@@ -7,6 +7,8 @@ export default function OtpPage() {
 
   // 4-Digit Array State for individual box manipulation
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const inputRefs = useRef([]);
 
   // Generate an automated testing code to output to developer tools console
@@ -15,7 +17,7 @@ export default function OtpPage() {
     console.log("-----------------------------------------");
     console.log(`[EKEDC SECURITY] Your One-Time Passcode is: ${randomCode}`);
     console.log("-----------------------------------------");
-    return randomCode;
+    setGeneratedOtp(randomCode);
   };
 
   // Trigger console log immediately when page mounts
@@ -46,6 +48,7 @@ export default function OtpPage() {
 
   const handleResend = () => {
     setOtp(["", "", "", ""]);
+    setErrorMessage("");
     inputRefs.current[0].focus();
     generateAndLogOtp();
     alert(
@@ -55,10 +58,19 @@ export default function OtpPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage("");
     const enteredOtp = otp.join("");
 
     if (enteredOtp.length < 4) {
-      alert("Please complete the 4-digit code entries.");
+      setErrorMessage("Please complete the 4-digit code entries.");
+      return;
+    }
+
+    // STRICT VALIDATION GATES: Match entries explicitly with the logged code
+    if (enteredOtp !== generatedOtp) {
+      setErrorMessage(
+        "Incorrect OTP code. Please check your developer console logs.",
+      );
       return;
     }
 
@@ -68,7 +80,7 @@ export default function OtpPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
-      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      {/* LEFT COLUMN PANEL */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
         {/* Step Back Action Trigger */}
         <button
@@ -92,7 +104,7 @@ export default function OtpPage() {
           Back
         </button>
 
-        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
+        {/* Full Bleed Portrait Image Layer */}
         <img
           src="/email.png"
           alt="Secure laptop post mailbox asset layout illustrations"
@@ -104,9 +116,9 @@ export default function OtpPage() {
         />
       </div>
 
-      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
-        {/* Continuous Flow Top Status Progress Bar Indicator (Filled 75% across onboarding) */}
+        {/* Continuous Flow Top Status Progress Bar Indicator */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex">
           <div className="w-[75%] h-full bg-[#C11224]" />
         </div>
@@ -140,21 +152,46 @@ export default function OtpPage() {
 
           {/* Central Security Code Matrix Block Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Split Individual Character Entry Node boxes */}
-            <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
-              {otp.map((data, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  maxLength="1"
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={data}
-                  onChange={(e) => handleChange(e.target, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  onFocus={(e) => e.target.select()}
-                  className="w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border border-gray-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 focus:ring-[#C11224] focus:border-[#C11224] transition-all text-gray-900"
-                />
-              ))}
+            <div className="flex flex-col items-center justify-center gap-2">
+              {/* Split Individual Character Entry Node boxes */}
+              <div className="flex items-center justify-center gap-3 sm:gap-4 py-2">
+                {otp.map((data, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    value={data}
+                    onChange={(e) => handleChange(e.target, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    onFocus={(e) => e.target.select()}
+                    className={`w-14 h-16 sm:w-16 sm:h-20 text-center text-xl font-bold border rounded-xl bg-white shadow-xs focus:outline-none focus:ring-1 transition-all text-gray-900 ${
+                      errorMessage
+                        ? "border-[#C11224] focus:ring-[#C11224] focus:border-[#C11224]"
+                        : "border-gray-200 focus:ring-[#C11224] focus:border-[#C11224]"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {errorMessage && (
+                <div className="flex items-center gap-1.5 pt-1 text-[#C11224]">
+                  <svg
+                    className="w-3.5 h-3.5 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-[10px] font-semibold tracking-wide text-center">
+                    {errorMessage}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Alternating Resend Prompt Option Line links */}

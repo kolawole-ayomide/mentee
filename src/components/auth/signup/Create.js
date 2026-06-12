@@ -41,17 +41,20 @@ export default function CreatePage() {
       return;
     }
 
-    // Save ALL fields to localStorage
+    // Clean up input email (lowercase and strip accidental trailing spaces)
+    const sanitizedEmail = workEmail.trim().toLowerCase();
+
+    // Save ALL step-one fields into localStorage
     localStorage.setItem(
       "vmpUser",
       JSON.stringify({
-        name:        `${firstName} ${lastName}`,
-        email:       workEmail,
-        phone:       phoneNumber,
-        staffId:     staffId,
-        department:  department,
+        name: `${firstName.trim()} ${lastName.trim()}`,
+        email: sanitizedEmail,
+        phone: phoneNumber,
+        staffId: staffId.trim(),
+        department: department,
         designation: designation,
-      })
+      }),
     );
 
     navigate("/upload");
@@ -61,7 +64,6 @@ export default function CreatePage() {
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
       {/* LEFT COLUMN PANEL */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
-        {/* Step Back Action Trigger */}
         <button
           type="button"
           onClick={() => navigate("/")}
@@ -83,7 +85,6 @@ export default function CreatePage() {
           Back
         </button>
 
-        {/* Full Bleed Portrait Image Layer */}
         <img
           src="/finelady.png"
           alt="Mentorship portal user feature portrait"
@@ -97,14 +98,11 @@ export default function CreatePage() {
 
       {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
-        {/* Step Progress Bar */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0 flex m-5 rounded-full overflow-hidden">
           <div className="w-[45%] h-full bg-[#C11224]" />
         </div>
 
-        {/* Form Inner Content Wrapper */}
         <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
-          {/* Logo */}
           <div className="flex justify-center">
             <img
               src="/companyLogo.png"
@@ -116,67 +114,61 @@ export default function CreatePage() {
             />
           </div>
 
-          {/* Heading */}
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Create an Account
             </h2>
             <p className="text-[11px] sm:text-xs text-gray-500 max-w-md mx-auto leading-relaxed">
               Take the first step toward your growth. By creating a mentee
-              account, you'll gain access to a world of knowledge, guidance, and
-              support
+              account, you'll gain access to guidance and support.
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleNextSubmit} className="space-y-4">
-            {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 text-left">
                 <label className="text-[11px] font-bold text-gray-700 block">
-                  First Name <span className="text-[#C11224]">*</span>
+                  First Name *
                 </label>
                 <input
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Enter your first name"
-                  className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900"
+                  className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   required
                 />
               </div>
 
               <div className="space-y-1 text-left">
                 <label className="text-[11px] font-bold text-gray-700 block">
-                  Last Name <span className="text-[#C11224]">*</span>
+                  Last Name *
                 </label>
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Enter your last name"
-                  className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900"
+                  className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                   required
                 />
               </div>
             </div>
 
-            {/* Work Email */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
-                Work Email Address <span className="text-[#C11224]">*</span>
+                Work Email Address *
               </label>
               <input
                 type="email"
                 value={workEmail}
                 onChange={(e) => setWorkEmail(e.target.value)}
                 placeholder="Enter your official email address"
-                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900"
+                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                 required
               />
             </div>
 
-            {/* Phone Number */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Phone Number
@@ -187,29 +179,27 @@ export default function CreatePage() {
                 value={phoneNumber}
                 onChange={handlePhoneNumberChange}
                 placeholder="Enter your 11-digit phone number"
-                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900"
+                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
               />
             </div>
 
-            {/* Staff ID */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
-                Staff ID <span className="text-[#C11224]">*</span>
+                Staff ID *
               </label>
               <input
                 type="text"
                 value={staffId}
                 onChange={(e) => setStaffId(e.target.value)}
                 placeholder="Enter your staff ID"
-                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900"
+                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white text-gray-900"
                 required
               />
             </div>
 
-            {/* Department */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
-                Department <span className="text-[#C11224]">*</span>
+                Department *
               </label>
               <div className="relative">
                 <select
@@ -248,10 +238,9 @@ export default function CreatePage() {
               </div>
             </div>
 
-            {/* Designation */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
-                Designation <span className="text-[#C11224]">*</span>
+                Designation *
               </label>
               <div className="relative">
                 <select
@@ -286,7 +275,6 @@ export default function CreatePage() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="pt-4">
               <button
                 type="submit"
@@ -296,7 +284,6 @@ export default function CreatePage() {
               </button>
             </div>
 
-            {/* Login Redirect */}
             <div className="text-center pt-2">
               <p className="text-[11px] sm:text-xs text-gray-500 font-normal">
                 Have an account already?{" "}
@@ -312,7 +299,6 @@ export default function CreatePage() {
           </form>
         </div>
 
-        {/* Footer */}
         <div className="text-center pb-4 text-[10px] text-gray-400 font-normal">
           © 2026 EXEDC Virtual Mentoring Portal. All rights reserved.
         </div>

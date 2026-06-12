@@ -5,24 +5,74 @@ import { useNavigate } from "react-router-dom";
 export default function ForgetPasswordPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     if (!email) {
-      alert("Please enter a valid work email address.");
+      setErrorMessage("Please enter a valid work email address.");
       return;
     }
 
-    // Routes perfectly to your 4-digit layout screen inside your ResetCode file component
-    navigate("/reset-code");
+    try {
+      // 1. Recover the database data string
+      const localStorageData = localStorage.getItem("vmpUser");
+
+      if (!localStorageData) {
+        setErrorMessage("Account not found. Please register an account first.");
+        return;
+      }
+
+      const registeredUser = JSON.parse(localStorageData);
+
+      // 2. Perform error-insulated case-insensitive matching
+      const inputEmail = email.trim().toLowerCase();
+      const savedEmail = registeredUser.email
+        ? registeredUser.email.trim().toLowerCase()
+        : "";
+
+      if (!savedEmail || inputEmail !== savedEmail) {
+        setErrorMessage(
+          "Account not found. Please check the email address and try again.",
+        );
+        return;
+      }
+
+      // 3. Generate a secure random 4-digit code
+      const generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
+
+      // 4. Output validation logs cleanly to console window
+      console.log("==========================================");
+      console.log(
+        `[EKEDC Security] Reset code for ${inputEmail}: ${generatedCode}`,
+      );
+      console.log("==========================================");
+
+      // 5. Store code context momentarily so next screen can compare input values
+      localStorage.setItem(
+        "vmpResetContext",
+        JSON.stringify({
+          email: savedEmail,
+          validCode: generatedCode,
+          timestamp: Date.now(),
+        }),
+      );
+
+      // 6. Router handoff redirection
+      navigate("/reset-code");
+    } catch (error) {
+      setErrorMessage(
+        "An unexpected data parsing issue occurred. Please re-register.",
+      );
+    }
   };
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
-      {/* LEFT COLUMN PANEL: Image hides completely on mobile/tablet screens and expands seamlessly strictly on desktop views (lg:flex) */}
+      {/* LEFT COLUMN PANEL */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#F9F9F9] relative flex-col justify-between overflow-hidden">
-        {/* Back Button -> Safely routes back to your login screen */}
         <button
           type="button"
           onClick={() => navigate("/login")}
@@ -44,7 +94,6 @@ export default function ForgetPasswordPage() {
           Back
         </button>
 
-        {/* Full Bleed Portrait Image Layer matching your exact responsive requirements */}
         <img
           src="/key.png"
           alt="Illustration of character carrying a security key code"
@@ -56,14 +105,11 @@ export default function ForgetPasswordPage() {
         />
       </div>
 
-      {/* RIGHT COLUMN PANEL: Handles full text/form space, centering beautifully across devices */}
+      {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
-        {/* Continuous Flow Top Status Progress Bar Indicator */}
         <div className="w-full h-1.5 bg-[#FDE8E9] absolute top-0 left-0 right-0" />
 
-        {/* Form Inner Content Wrapper */}
         <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
-          {/* Corporate Brand Identity Badge */}
           <div className="flex justify-center">
             <img
               src="/companyLogo.png"
@@ -75,7 +121,6 @@ export default function ForgetPasswordPage() {
             />
           </div>
 
-          {/* Heading Header Context Strings */}
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
               Forgot your password?
@@ -86,9 +131,7 @@ export default function ForgetPasswordPage() {
             </p>
           </div>
 
-          {/* Request Submission Input Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Input Node Entry Field */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Work Email Address <span className="text-[#C11224]">*</span>
@@ -98,12 +141,34 @@ export default function ForgetPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your official email address"
-                className="w-full text-xs p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal"
+                className={`w-full text-xs p-3 border rounded-lg focus:outline-none focus:ring-1 bg-white placeholder-gray-300 transition-all text-gray-900 font-normal ${
+                  errorMessage
+                    ? "border-[#C11224] focus:border-[#C11224] focus:ring-[#C11224]"
+                    : "border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                }`}
                 required
               />
+
+              {errorMessage && (
+                <div className="flex items-center gap-1.5 pt-1 text-[#C11224]">
+                  <svg
+                    className="w-3.5 h-3.5 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-[10px] font-semibold tracking-wide">
+                    {errorMessage}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Form CTA Push Submission Button */}
             <div className="pt-2">
               <button
                 type="submit"
@@ -115,7 +180,6 @@ export default function ForgetPasswordPage() {
           </form>
         </div>
 
-        {/* Global base system footer notice */}
         <div className="text-center pb-4 text-[10px] text-gray-400 font-normal">
           © 2026 EXEDC Virtual Mentoring Portal. All rights reserved.
         </div>
