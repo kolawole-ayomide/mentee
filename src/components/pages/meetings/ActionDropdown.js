@@ -17,7 +17,7 @@ const [dropdownStyle, setDropdownStyle] = useState({});
 const buttonRef = useRef(null);
 const dropdownRef = useRef(null);
 
-// ✅ close on outside click
+// close on outside click
 useEffect(() => {
 const handler = (e) => {
     if (
@@ -31,7 +31,7 @@ document.addEventListener("mousedown", handler);
 return () => document.removeEventListener("mousedown", handler);
 }, []);
 
-// ✅ calculate position when opening — flip up if near bottom of screen
+// calculate position when opening — flip up if near bottom of screen
 const handleOpen = () => {
 if (!open && buttonRef.current) {
     const rect = buttonRef.current.getBoundingClientRect();
@@ -117,7 +117,7 @@ return (
     />
     </button>
 
-    {/* ✅ portal renders dropdown outside the table — no overflow clipping */}
+    {/* portal renders dropdown outside the table — no overflow clipping */}
     {open && createPortal(
     <div
         ref={dropdownRef}
