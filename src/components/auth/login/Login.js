@@ -32,19 +32,25 @@ export default function LoginPage() {
         setError("No account found with this email. Please sign up first.");
         return;
       }
-      // ── saves to context so Dashboard re-renders immediately ──
+
+      // ── saves user to context so Dashboard renders name immediately ──
       saveUser(user);
+
+      // ── CHANGED: set session flag so ProtectedRoute knows user is logged in ──
+      // ── sessionStorage clears automatically when browser tab is closed ──
+      sessionStorage.setItem("vmpSession", "true");
+
     } catch {
       setError("Something went wrong. Please sign up again.");
       return;
     }
 
-    navigate("/dashboard");
+    // ── CHANGED: replace:true so back button cannot return to login after entering dashboard ──
+    navigate("/dashboard", { replace: true });
   };
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white font-sans antialiased select-none">
-      {/* LEFT COLUMN PANEL */}
       <div className="hidden lg:flex lg:w-[42%] bg-[#2D2322] relative flex-col justify-between overflow-hidden">
         <img
           src="/logingirl.png"
@@ -58,12 +64,10 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/5 pointer-events-none z-20" />
       </div>
 
-      {/* RIGHT COLUMN PANEL */}
       <div className="w-full lg:w-[58%] flex flex-col justify-between relative bg-white min-h-screen lg:min-h-0">
         <div className="w-full h-1.5 bg-gray-50 absolute top-0 left-0 right-0" />
 
         <div className="max-w-xl w-full mx-auto px-6 sm:px-12 lg:px-16 py-12 my-auto space-y-6">
-          {/* Logo */}
           <div className="flex justify-center">
             <img
               src="/companyLogo.png"
@@ -75,7 +79,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Heading */}
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">Login</h2>
             <p className="text-[11px] sm:text-xs text-gray-500 max-w-xs mx-auto leading-relaxed font-normal">
@@ -85,7 +88,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-600 font-medium text-center">
               {error}
@@ -93,7 +95,6 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Work Email Address <span className="text-[#C11224]">*</span>
@@ -108,7 +109,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div className="space-y-1 text-left">
               <label className="text-[11px] font-bold text-gray-700 block">
                 Password <span className="text-[#C11224]">*</span>
@@ -144,7 +144,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <div className="pt-3">
               <button
                 type="submit"
@@ -154,7 +153,6 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Sign up link */}
             <div className="text-center pt-1">
               <span className="text-[11px] sm:text-xs text-gray-500 font-normal">
                 Don't have an account as a Mentee?{" "}
@@ -168,7 +166,6 @@ export default function LoginPage() {
               </span>
             </div>
 
-            {/* Forgot password */}
             <div className="text-center pt-3">
               <button
                 type="button"

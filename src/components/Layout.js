@@ -5,16 +5,15 @@ import {
   FiMessageSquare, FiUser, FiUserCheck, FiUsers, FiVideo, FiX,
 } from "react-icons/fi";
 import { useUser } from "../context/UserContext";
-import { clearAllFiles } from "./pages/chat/utils/fileStorage";
 
 const navItems = [
-  { name: "Dashboard",  path: "/dashboard",  icon: FiGrid        },
-  { name: "Mentors",    path: "/mentors",     icon: FiUsers       },
-  { name: "My Mentors", path: "/my-mentors",  icon: FiUserCheck   },
-  { name: "Courses",    path: "/courses",     icon: FiBookOpen    },
+  { name: "Dashboard",  path: "/dashboard",  icon: FiGrid          },
+  { name: "Mentors",    path: "/mentors",     icon: FiUsers         },
+  { name: "My Mentors", path: "/my-mentors",  icon: FiUserCheck     },
+  { name: "Courses",    path: "/courses",     icon: FiBookOpen      },
   { name: "Chat",       path: "/chat",        icon: FiMessageSquare },
-  { name: "Meetings",   path: "/meetings",    icon: FiVideo       },
-  { name: "Profile",    path: "/profile",     icon: FiUser        },
+  { name: "Meetings",   path: "/meetings",    icon: FiVideo         },
+  { name: "Profile",    path: "/profile",     icon: FiUser          },
 ];
 
 function SidebarLink({ item, onClick }) {
@@ -62,7 +61,6 @@ function Brand({ logoSrc, brandName }) {
 export default function Layout({
   logoSrc = "/companyLogo.png",
   brandName = "EXEDC",
-  logoutTo = "/",
   onLogout,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -70,19 +68,27 @@ export default function Layout({
   const navigate = useNavigate();
   const { user, clearUser } = useUser();
 
-  // ── derive avatar and initials from context ──
   const avatar = user?.avatar || null;
   const initials = user?.name
     ? user.name.trim().split(" ").filter(Boolean)
         .slice(0, 2).map((p) => p[0].toUpperCase()).join("")
     : "U";
 
-const handleLogout = async () => {
-  await clearAllFiles().catch(() => {});  // ← clear IndexedDB files
-  clearUser();
-  if (typeof onLogout === "function") { onLogout(); return; }
-  navigate(logoutTo);
-};
+  const handleLogout = () => {
+    // ── CHANGED: clears the session flag so ProtectedRoute blocks dashboard access ──
+    // ── CHANGED: does NOT touch localStorage so user details survive for next login ──
+    // ── CHANGED: clearUser only resets in-memory React state ──
+    // ── CHANGED: replace:true means back button cannot return to dashboard ──
+    sessionStorage.removeItem("vmpSession");
+    clearUser();
+
+    if (typeof onLogout === "function") {
+      onLogout();
+      return;
+    }
+
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -151,7 +157,6 @@ const handleLogout = async () => {
             </div>
 
             <div className="flex items-center space-x-[5rem]">
-              {/* Bell */}
               <button
                 type="button"
                 onClick={() => navigate("/notifications")}
@@ -161,7 +166,6 @@ const handleLogout = async () => {
                 <FiBell className="h-4 w-4" />
               </button>
 
-              {/* ── Avatar — shows profile pic or initials ── */}
               <button
                 type="button"
                 onClick={() => navigate("/profile")}

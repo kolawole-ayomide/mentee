@@ -28,22 +28,32 @@ import Profile from "./components/pages/profile/Profile";
 // Context
 import { UserProvider } from "./context/UserContext";
 
-// ── Guards dashboard routes — if no vmpUser in localStorage, redirect to "/" ──
+// ── Checks for active login session ──
 function ProtectedRoute({ children }) {
-  const user = localStorage.getItem("vmpUser");
-  if (!user) {
-    return <Navigate to="/" replace />;
+  const session = sessionStorage.getItem("vmpSession");
+  if (!session) {
+    return <Navigate to="/login" replace />;
   }
   return children;
 }
 
-// ── Guards auth routes — if already logged in, redirect to dashboard ──
+// ── Blocks login/signup if already logged in ──
 function PublicRoute({ children }) {
-  const user = localStorage.getItem("vmpUser");
-  if (user) {
+  const session = sessionStorage.getItem("vmpSession");
+  if (session) {
     return <Navigate to="/dashboard" replace />;
   }
   return children;
+}
+
+// ── CHANGED: ProtectedLayout is a separate component that handles both
+//    the session check AND renders Layout with Outlet working correctly ──
+function ProtectedLayout() {
+  const session = sessionStorage.getItem("vmpSession");
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Layout logoSrc="/companyLogo.png" brandName="EXEDC" />;
 }
 
 function App() {
@@ -52,29 +62,21 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* ── Public / Auth routes ── */}
-          <Route path="/" element={<PublicRoute><ChosenPage /></PublicRoute>} />
+          <Route path="/" element={<ChosenPage />} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/forgot-password" element={<ForgetPasswordPage />} />
           <Route path="/reset-code" element={<ResetCodePage />} />
           <Route path="/password-reset-entry" element={<VerificationSucessfulPage />} />
           <Route path="/password-reset-success" element={<PasswordRestSuccessfulPage />} />
-          <Route path="/signup" element={<PublicRoute><CreatePage /></PublicRoute>} />
+          <Route path="/signup" element={<CreatePage />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/verify-otp" element={<OtpPage />} />
           <Route path="/verification-success" element={<VerificationPage />} />
 
           {/* ── Protected Dashboard routes ── */}
-          <Route
-            element={
-              <ProtectedRoute>
-                <Layout
-                  logoSrc="/companyLogo.png"
-                  brandName="EXEDC"
-                  logoutTo="/"
-                />
-              </ProtectedRoute>
-            }
-          >
+          {/* CHANGED: element is now ProtectedLayout which handles both 
+              the session check and rendering Layout correctly ── */}
+          <Route element={<ProtectedLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/mentors" element={<Mentors />} />
@@ -84,8 +86,6 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/meetings" element={<Meeting />} />
             <Route path="/profile" element={<Profile />} />
-
-            {/* Fallback inside protected */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Routes>
