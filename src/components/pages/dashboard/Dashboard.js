@@ -207,7 +207,6 @@ export default function Dashboard() {
 }
 
 
-
 // // src/components/pages/dashboard/Dashboard.js
 // import React, { useMemo } from "react";
 // import { Link, useSearchParams } from "react-router-dom";
@@ -939,4 +938,217 @@ export default function Dashboard() {
 //       joinedGroups={joinedGroups}
 //     />
 //   );
+// }
+
+
+// import React, { useMemo } from "react";
+// import { useSearchParams } from "react-router-dom";
+// import { useUser } from "../../../context/UserContext";
+// import { SHOW_COURSES_EMPTY_STATE, COURSE_DATA } from "../courses/data/coursesData";
+
+// import EmptyDashboardView     from "./components/EmptyDashboardView";
+// import FirstTimeDashboardView from "./components/FirstTimeDashboardView";
+// import ExistingDashboardView  from "./components/ExistingDashboardView";
+
+// const dashboardPresets = {
+//   empty: {
+//     banner: {
+//       text: "Hey! kindly complete your VMP profile",
+//       actionLabel: "Update Profile",
+//       actionTo: "/profile",
+//     }
+//     subtitle: "Embark on a Journey of Growth and Achievement with Us",
+//     stats: [
+//       { label: "VMP Progress", value: "0%", progress: 0 },
+//       { label: "My Progress", value: "0%", progress: 0 },
+//     ],
+//     courseSummary: { total: 0, ongoing: 0, completed: 0 },
+//     recommendedMentors: {
+//       title: "Recommended Mentors",
+//       emptyTitle: "You don't have a Mentor",
+//       emptyDescription: "Kindly proceed to check the available or recommended mentors.",
+//       illustrationSrc: "/mentorsemptystate.svg",
+//     },
+//     meetings: {
+//       title: "Upcoming Meetings",
+//       emptyTitle: "No scheduled meeting yet",
+//       emptyDescription: "",
+//     },
+//     discussionGroups: {
+//       title: "Discussion Groups",
+//       emptyTitle: "No Discussion Groups Found",
+//       emptyDescription: "It appears there are no discussion groups available right now. Stay tuned for upcoming group discussions, where you can connect with like-minded individuals and engage in meaningful conversations.",
+//     },
+//   },
+
+//   "first-time": {
+//     banner: {
+//       text: "Hey! kindly complete your VMP profile",
+//       actionLabel: "Update Profile",
+//       actionTo: "/profile",
+//     },
+//     subtitle: "Embark on a Journey of Growth and Achievement with Us",
+//     stats: [
+//       { label: "VMP Progress", value: "0%", progress: 0 },
+//       { label: "My Progress", value: "0%", progress: 0 },
+//     ],
+//     courseSummary: { total: 45, ongoing: 0, completed: 0 },
+//     recommendedMentors: [
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/daniel.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/frank.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/david.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/tola.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/bimbo.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/saheed.png" },
+//     ],
+//     meetings: [],
+//     discussionGroups: [
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//     ],
+//   },
+
+//   existing: {
+//     subtitle: "",
+//     stats: [
+//       { label: "VMP Progress", value: "90%", progress: 90 },
+//       { label: "My Progress", value: "56%", progress: 56 },
+//     ],
+//     courseSummary: { total: 45, ongoing: 4, completed: 15 },
+//     journey: {
+//       title: "Your Mentorship Journey Continues",
+//       highlight: "Keep Thriving!",
+//       description: "Your commitment to growth inspires us. Update your profile, engage with the community, and together, let's reach new heights!",
+//     },
+//     activeMentors: [
+//       { name: "Jennifer Gregory", expertise: "Skill Development", image: "/Jennifer.png" },
+//       { name: "Gideon Tayo", expertise: "Skill Development", image: "/Gideon.png" },
+//     ],
+//     recommendedMentors: [
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/daniel.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/frank.png" },
+//       { name: "Daniel Francis", role: "Head of marketing", expertise: "Skill Development", image: "/david.png" },
+//     ],
+//     meetings: [
+//       { title: "Goal Setting and Achievement", mentor: "Favour Graham", date: "12/10/2023", time: "1:00pm" },
+//       { title: "Goal Setting and Achievement", mentor: "Favour Graham", date: "12/10/2023", time: "1:00pm" },
+//     ],
+//     discussionGroups: [
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "View chats" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//       { name: "Wisdom Exchange", subtitle: "Where Knowledge Meets Conversation", mentees: 14, mentors: 5, buttonLabel: "Join" },
+//     ],
+//   },
+// };
+
+// const fallbackUser = {
+//   name: "",
+//   vmpCompleted: false,
+//   mentors: [],
+//   meetings: [],
+//   documents: [],
+//   discussionGroups: [],
+//   courseStats: { total: 0, ongoing: 0, completed: 0 },
+// };
+
+// function normalizeState(value) {
+//   return ["empty", "first-time", "existing"].includes(value) ? value : null;
+// }
+
+// function readCourseStats() {
+//   try {
+//     if (SHOW_COURSES_EMPTY_STATE) return { total: 0, ongoing: 0, completed: 0 };
+//     const completedIds = JSON.parse(localStorage.getItem("completedCourses") || "[]");
+//     const courses = COURSE_DATA.map((c) =>
+//       completedIds.includes(c.id) ? { ...c, status: "Completed" } : c
+//     );
+//     return {
+//       total:     courses.length,
+//       ongoing:   courses.filter((c) => c.status === "Ongoing").length,
+//       completed: courses.filter((c) => c.status === "Completed").length,
+//     };
+//   } catch {
+//     return { total: 0, ongoing: 0, completed: 0 };
+//   }
+// }
+
+// function readMeetings() {
+//   try {
+//     const saved = localStorage.getItem("vmpMeetings");
+//     return saved ? JSON.parse(saved) : [];
+//   } catch {
+//     return [];
+//   }
+// }
+
+// function readJoinedGroups() {
+//   try {
+//     const saved = localStorage.getItem("vmpJoinedGroups");
+//     return saved ? JSON.parse(saved) : [];
+//   } catch {
+//     return [];
+//   }
+// }
+
+// function deriveDashboardState(user, meetings, joinedGroups, courseStats) {
+//   const vmpCompleted = Boolean(user?.vmpCompleted);
+
+//   const hasExistingActivity =
+//     meetings.length > 0 ||
+//     joinedGroups.length > 0 ||
+//     courseStats.ongoing > 0 ||
+//     courseStats.completed > 0;
+
+//   if (!vmpCompleted) return "empty";
+//   if (!hasExistingActivity) return "first-time";
+//   return "existing";
+// }
+
+// export default function Dashboard() {
+//   const { user } = useUser();
+//   const [searchParams] = useSearchParams();
+
+//   const currentUser = useMemo(
+//     () => ({ ...fallbackUser, ...(user || {}) }),
+//     [user]
+//   );
+
+//   const courseStats  = readCourseStats();
+//   const meetings     = readMeetings();
+//   const joinedGroups = readJoinedGroups();
+
+//   const previewState = searchParams.get("state");
+
+//   const currentState = useMemo(() => {
+//     const derived = deriveDashboardState(currentUser, meetings, joinedGroups, courseStats);
+//     const preview = normalizeState(previewState);
+//     if (process.env.NODE_ENV === "development" && preview) return preview;
+//     return derived;
+//   }, [currentUser, previewState, meetings, joinedGroups, courseStats]);
+
+//   const data = dashboardPresets[currentState];
+
+//   const greeting =
+//     currentState === "existing"
+//       ? `Welcome Back! ${currentUser.name || "there"} 😇`
+//       : `Welcome! ${currentUser.name || "there"} 😇`;
+
+//   const bannerData = currentState === "empty"
+//     ? { ...data, banner: { ...data.banner, text: `Hey ${currentUser.name || "there"}! kindly complete your VMP profile` } }
+//     : { ...data, banner: data.banner ? { ...data.banner, text: `Hey ${currentUser.name || "there"}! kindly complete your VMP profile` } : undefined };
+
+//   if (currentState === "empty") {
+//     return <EmptyDashboardView data={bannerData} greeting={greeting} courseStats={courseStats} meetings={meetings} joinedGroups={joinedGroups} />;
+//   }
+
+//   if (currentState === "first-time") {
+//     return <FirstTimeDashboardView data={bannerData} greeting={greeting} meetings={meetings} joinedGroups={joinedGroups} />;
+//   }
+
+//   return <ExistingDashboardView data={data} greeting={greeting} meetings={meetings} joinedGroups={joinedGroups} />;
 // }

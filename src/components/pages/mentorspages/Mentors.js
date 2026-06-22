@@ -369,7 +369,7 @@ export default function Mentors() {
   );
 }
 
-export { MentorCard };
+export { MentorCard, mentorBaseData };
 
 
 
