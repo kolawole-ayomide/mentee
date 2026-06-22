@@ -1,7 +1,8 @@
 // src/components/pages/profile/PersonalInfo.js
 import React, { useState, useRef } from "react";
 import { IoImageOutline } from "react-icons/io5";
-import { C, IMPROVEMENT_OPTIONS } from "./data/profileData";
+// AFTER
+import { C } from "./data/profileData";
 import AreaOfImprovement from "./modals/AreaOFImprovement";
 
 function loadUserFromStorage() {

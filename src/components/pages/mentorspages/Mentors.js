@@ -3,7 +3,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiLink2, FiMail, FiSearch } from "react-icons/fi";
 
 import SearchInput  from "./components/SearchInput";
-import FilterTabs, { TABS } from "./components/FilterTabs";
+// AFTER — only import what's actually used here
+import FilterTabs from "./components/FilterTabs";
 import MentorImage  from "./components/MentorImage";
 import StarRating   from "./components/StarRating";
 import ReviewCard   from "./components/ReviewCard";
@@ -14,9 +15,9 @@ function cx(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function getInitials(name) {
-  return name.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-}
+// function getInitials(name) {
+//   return name.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+// }
 
 const mentorBaseData = [
   {

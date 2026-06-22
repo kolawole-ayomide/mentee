@@ -130,7 +130,7 @@
 // src/components/pages/dashboard/Notifications.js
 // src/components/pages/dashboard/Notifications.js
 import React, { useMemo, useState } from "react";
-import { FiBell, FiX, FiArrowLeft } from "react-icons/fi";
+import { FiBell, FiArrowLeft } from "react-icons/fi";
 
 function useStoredName() {
   try {

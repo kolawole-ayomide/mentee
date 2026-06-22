@@ -29,13 +29,13 @@ import Profile from "./components/pages/profile/Profile";
 import { UserProvider } from "./context/UserContext";
 
 // ── Checks for active login session ──
-function ProtectedRoute({ children }) {
-  const session = sessionStorage.getItem("vmpSession");
-  if (!session) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-}
+// function ProtectedRoute({ children }) {
+//   const session = sessionStorage.getItem("vmpSession");
+//   if (!session) {
+//     return <Navigate to="/login" replace />;
+//   }
+//   return children;
+// }
 
 // ── Blocks login/signup if already logged in ──
 function PublicRoute({ children }) {
